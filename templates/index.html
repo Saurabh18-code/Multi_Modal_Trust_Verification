@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TrustNet AI — Digital Trust Verification</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #05070b;
+            --bg2: #090d14;
+            --card: rgba(14, 20, 31, 0.72);
+            --card-hover: rgba(19, 27, 41, 0.9);
+            --border: rgba(148, 163, 184, 0.13);
+
+            --cyan: #55e6c1;
+            --cyan2: #25c7ff;
+            --violet: #8b7cff;
+            --blue: #5b8cff;
+
+            --text: #f4f7fb;
+            --muted: #8b9bb2;
+            --muted2: #63738a;
+
+            --success: #55e6c1;
+            --warning: #ffc857;
+            --danger: #ff6b81;
+
+            --shadow: 0 25px 80px rgba(0, 0, 0, .45);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(37, 199, 255, .08), transparent 30%),
+                radial-gradient(circle at 90% 15%, rgba(139, 124, 255, .09), transparent 28%),
+                radial-gradient(circle at 50% 100%, rgba(85, 230, 193, .05), transparent 30%),
+                var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: .12;
+            pointer-events: none;
+            z-index: -1;
+            animation: floatGlow 12s ease-in-out infinite alternate;
+        }
+
+        body::before {
+            background: var(--cyan2);
+            top: -180px;
+            left: -160px;
+        }
+
+        body::after {
+            background: var(--violet);
+            right: -180px;
+            bottom: -180px;
+            animation-delay: 2s;
+        }
+
+        @keyframes floatGlow {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+            to {
+                transform: translate(45px, 35px) scale(1.15);
+            }
+        }
+
+        .page {
+            width: min(1320px, calc(100% - 40px));
+            margin: auto;
+            padding-bottom: 70px;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
+
+            display: grid;
+            place-items: center;
+
+            font-family: "Space Grotesk";
+            font-size: 17px;
+            font-weight: 700;
+
+            color: #04100d;
+
+            background: linear-gradient(
+                135deg,
+                var(--cyan),
+                var(--cyan2)
+            );
+
+            box-shadow:
+                0 0 30px rgba(85, 230, 193, .18),
+                inset 0 1px 1px rgba(255,255,255,.45);
+        }
+
+        .brand-name {
+            font-family: "Space Grotesk";
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(85,230,193,.14);
+            background: rgba(85,230,193,.045);
+            color: #a7b4c7;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: .4;
+                transform: scale(.75);
+            }
+        }
+
+        /* HERO */
+
+        .hero {
+            padding: 68px 0 45px;
+            text-align: center;
+            animation: fadeUp .7s ease both;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid rgba(85,230,193,.16);
+            background: rgba(85,230,193,.045);
+            border-radius: 999px;
+            color: var(--cyan);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-family: "Space Grotesk";
+            font-size: clamp(38px, 5vw, 68px);
+            line-height: 1.03;
+            letter-spacing: -3px;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .gradient-text {
+            background: linear-gradient(
+                100deg,
+                #ffffff 10%,
+                #72f0d0 45%,
+                #8d83ff 90%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            max-width: 620px;
+            margin: 20px auto 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* MAIN CARD */
+
+        .glass {
+            background: linear-gradient(
+                145deg,
+                rgba(18,25,38,.78),
+                rgba(9,14,22,.72)
+            );
+
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .verification-box {
+            border-radius: 24px;
+            padding: 30px;
+            animation: fadeUp .7s .1s ease both;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-family: "Space Grotesk";
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .secure-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--cyan);
+            font-size: 11px;
+            padding: 8px 12px;
+            border-radius: 9px;
+            background: rgba(85,230,193,.05);
+            border: 1px solid rgba(85,230,193,.1);
+        }
+
+        /* FORM */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 9px;
+            color: #aebbd0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .input {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: rgba(4,8,14,.65);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 12px;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+            transition: .25s ease;
+        }
+
+        .input:focus {
+            border-color: rgba(85,230,193,.45);
+            box-shadow: 0 0 0 4px rgba(85,230,193,.06);
+        }
+
+        /* UPLOAD */
+
+        .upload-card {
+            position: relative;
+            min-height: 150px;
+            border: 1px dashed rgba(139,156,180,.23);
+            background: rgba(4,8,14,.45);
+            border-radius: 15px;
+            padding: 23px;
+            transition: .3s ease;
+            overflow: hidden;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(85,230,193,.4);
+            background: rgba(12,23,29,.7);
+            box-shadow: 0 15px 40px rgba(0,0,0,.2);
+        }
+
+        .upload-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            background: rgba(85,230,193,.08);
+            border: 1px solid rgba(85,230,193,.12);
+            margin-bottom: 13px;
+        }
+
+        .upload-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .upload-info {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .file-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name {
+            display: none;
+            margin-top: 12px;
+            color: var(--cyan);
+            font-size: 11px;
+            word-break: break-all;
+        }
+
+        /* BUTTON */
+
+        .verify-wrap {
+            margin-top: 24px;
+        }
+
+        .verify-button {
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            padding: 16px;
+            border-radius: 13px;
+
+            color: #03100c;
+            font-family: "Space Grotesk";
+            font-size: 14px;
+            font-weight: 700;
+
+            background: linear-gradient(
+                100deg,
+                var(--cyan),
+                #65d9ff 55%,
+                #8e82ff
+            );
+
+            box-shadow:
+                0 10px 35px rgba(85,230,193,.13);
+
+            transition: .3s ease;
+        }
+
+        .verify-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 15px 45px rgba(85,230,193,.23);
+        }
+
+        .verify-button:active {
+            transform: scale(.99);
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loader {
+            width: 22px;
+            height: 22px;
+            margin: 0 auto 9px;
+            border: 2px solid rgba(255,255,255,.12);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ANALYSIS */
+
+        .analysis {
+            margin-top: 55px;
+        }
+
+        .analysis-heading {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-heading h2 {
+            font-family: "Space Grotesk";
+            font-size: 20px;
+        }
+
+        .line {
+            height: 1px;
+            background: var(--border);
+            flex: 1;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .result-card {
+            padding: 25px;
+            border-radius: 19px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp .6s ease both;
+        }
+
+        .result-card::before {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            right: -90px;
+            top: -90px;
+            border-radius: 50%;
+            background: var(--cyan);
+            filter: blur(80px);
+            opacity: .06;
+        }
+
+        .result-label {
+            color: #8fa1ba;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+        }
+
+        .score-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 21px 0 13px;
+        }
+
+        .score {
+            font-family: "Space Grotesk";
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+
+        .confidence {
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
+        .progress {
+            height: 5px;
+            background: #182330;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--cyan), #72dfff);
+            transition: width 1.2s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .result-description {
+            margin-top: 15px;
+            color: #8ea1ba;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* FINAL TRUST */
+
+        .trust-card {
+            margin-top: 18px;
+            border-radius: 22px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border-color: rgba(85,230,193,.17);
+            background:
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(85,230,193,.08),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    145deg,
+                    rgba(17,34,35,.72),
+                    rgba(9,16,24,.75)
+                );
+        }
+
+        .trust-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .trust-label {
+            color: #8ea6c2;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .trust-score {
+            font-family: "Space Grotesk";
+            font-size: clamp(58px, 8vw, 88px);
+            font-weight: 700;
+            letter-spacing: -5px;
+            margin-top: 8px;
+            background: linear-gradient(
+                100deg,
+                white,
+                var(--cyan)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .trust-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .decision-area {
+            text-align: right;
+        }
+
+        .decision {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,.1);
+        }
+
+        .decision::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .decision.verified {
+            color: var(--success);
+            background: rgba(85,230,193,.06);
+        }
+
+        .decision.uncertain {
+            color: var(--warning);
+            background: rgba(255,200,87,.06);
+        }
+
+        .decision.rejected {
+            color: var(--danger);
+            background: rgba(255,107,129,.06);
+        }
+
+        .decision-description {
+            max-width: 410px;
+            color: #7e91ac;
+            font-size: 11px;
+            line-height: 1.7;
+            margin-top: 18px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            color: #506179;
+            font-size: 10px;
+            line-height: 1.7;
+            margin-top: 65px;
+        }
+
+        /* ANIMATION */
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .page {
+                width: min(100% - 24px, 700px);
+            }
+
+            .navbar {
+                height: 72px;
+            }
+
+            .hero {
+                padding: 45px 0 30px;
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .verification-box {
+                padding: 20px;
+            }
+
+            .form-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .trust-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .decision-area {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .system-status {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .score {
+                font-size: 35px;
+            }
+
+            .trust-score {
+                font-size: 62px;
+            }
+        }
+        /* =========================================
+   BEHAVIORAL TYPING VERIFICATION
+   ========================================= */
+
+.typing-card {
+    grid-column: 1 / -1;
+    padding: 20px;
+    border: 1px solid rgba(139, 156, 180, 0.16);
+    background: rgba(4, 8, 14, 0.45);
+    border-radius: 15px;
+    transition: 0.3s ease;
+}
+
+.typing-card:hover {
+    border-color: rgba(139, 124, 255, 0.30);
+    background: rgba(10, 14, 24, 0.65);
+}
+
+.typing-card:focus-within {
+    border-color: rgba(139, 124, 255, 0.45);
+    box-shadow: 0 0 0 4px rgba(139, 124, 255, 0.06);
+}
+
+.typing-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.typing-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    background: rgba(139, 124, 255, 0.09);
+    border: 1px solid rgba(139, 124, 255, 0.16);
+}
+
+.typing-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.typing-subtitle {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.typing-instruction {
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: rgba(139, 124, 255, 0.045);
+    border: 1px solid rgba(139, 124, 255, 0.09);
+    color: #aebbd0;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.typing-prompt {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.typing-input {
+    width: 100%;
+    min-height: 95px;
+    resize: vertical;
+    border: 1px solid var(--border);
+    background: rgba(4, 8, 14, 0.7);
+    color: white;
+    padding: 14px 16px;
+    border-radius: 12px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+    transition: 0.25s ease;
+}
+
+.typing-input::placeholder {
+    color: #59677b;
+}
+
+.typing-input:focus {
+    border-color: rgba(139, 124, 255, 0.5);
+    box-shadow: 0 0 0 4px rgba(139, 124, 255, 0.06);
+}
+
+.typing-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: var(--muted2);
+    font-size: 10px;
+}
+
+#typingStatus {
+    color: var(--violet);
+}
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <div class="logo">
+                TN
+            </div>
+
+            <div>
+                <div class="brand-name">
+                    TrustNet AI
+                </div>
+
+                <div class="brand-sub">
+                    Digital Trust Intelligence
+                </div>
+            </div>
+
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            System Operational
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="eyebrow">
+            ✦ AI-POWERED IDENTITY SECURITY
+        </div>
+
+        <h1>
+            Verify identity with
+            <span class="gradient-text">
+                intelligent trust.
+            </span>
+        </h1>
+
+        <p>
+            TrustNet AI combines facial verification, document intelligence
+            and evidence fusion to determine digital identity confidence.
+        </p>
+
+    </section>
+
+
+    <!-- VERIFICATION FORM -->
+
+    <section class="verification-box glass">
+
+        <div class="section-head">
+
+            <div>
+                <div class="section-title">
+                    Identity Verification
+                </div>
+
+                <div class="section-description">
+                    Submit your identity evidence for multi-modal analysis.
+                </div>
+            </div>
+
+            <div class="secure-pill">
+                🔒 Secure Processing
+            </div>
+
+        </div>
+
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              id="verifyForm">
+
+            <div class="form-grid">
+
+                <!-- USER ID -->
+
+                <div class="field full">
+
+                    <label>
+                        USER IDENTIFIER
+                    </label>
+
+                    <input
+                      class="input"
+                     type="text"
+                      name="user_id"
+                      id="userId"
+                      placeholder="Enter Name + Surname or Name + Number"
+                     required
+                      autocomplete="off"
+>
+
+                </div>
+
+
+                <!-- LIVE PHOTO -->
+
+                <div class="field">
+
+                    <label>
+                        LIVE PHOTO
+                    </label>
+
+                    <div class="upload-card">
+
+                        <div class="upload-icon">
+                            ◉
+                        </div>
+
+                        <div class="upload-title">
+                            Upload live photograph
+                        </div>
+
+                        <div class="upload-info">
+                            JPG / PNG • Clear face required
+                        </div>
+
+                        <div class="file-name" id="liveName"></div>
+
+                        <input
+                            class="file-input"
+                            type="file"
+                            name="live_photo"
+                            id="livePhoto"
+                            accept="image/*"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ID DOCUMENT -->
+
+                <div class="field">
+
+                    <label>
+                        ID DOCUMENT
+                    </label>
+
+                    <div class="upload-card">
+
+                        <div class="upload-icon">
+                            ▣
+                        </div>
+
+                        <div class="upload-title">
+                            Upload identity document
+                        </div>
+
+                        <div class="upload-info">
+                            Aadhaar / PAN / Passport • JPG / PNG
+                        </div>
+
+                        <div class="file-name" id="docName"></div>
+
+                        <input
+                            class="file-input"
+                            type="file"
+                            name="id_document"
+                            id="idDocument"
+                            accept="image/*"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+                
+
+
+            </div>
+
+
+            <div class="verify-wrap">
+
+                <button
+                    class="verify-button"
+                    type="submit"
+                    id="verifyButton"
+                >
+                    VERIFY DIGITAL IDENTITY &nbsp; →
+                </button>
+
+                <div class="loading" id="loading">
+
+                    <div class="loader"></div>
+
+                    TrustNet AI is analyzing your identity evidence...
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    {% if result %}
+
+    <!-- RESULTS -->
+
+    <section class="analysis">
+
+        <div class="analysis-heading">
+
+            <h2>
+                Verification Analysis
+            </h2>
+
+            <div class="line"></div>
+
+        </div>
+
+
+        <div class="result-grid">
+
+            <!-- FACE -->
+
+            <div class="result-card glass">
+
+                <div class="result-label">
+                    Face Verification
+                </div>
+
+                <div class="score-row">
+
+                    <div class="score">
+                        {{ result.face_score }}%
+                    </div>
+
+                    <div class="confidence">
+                        confidence
+                    </div>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="{{ result.face_score }}"
+                    ></div>
+
+                </div>
+
+                <div class="result-description">
+                    {{ result.face_explanation }}
+                </div>
+
+            </div>
+
+
+            <!-- DOCUMENT -->
+
+            <div class="result-card glass">
+
+                <div class="result-label">
+                    Document Verification
+                </div>
+
+                <div class="score-row">
+
+                    <div class="score">
+                        {{ result.document_score }}%
+                    </div>
+
+                    <div class="confidence">
+                        confidence
+                    </div>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        data-width="{{ result.document_score }}"
+                    ></div>
+
+                </div>
+
+                <div class="result-description">
+                    {{ result.document_explanation }}
+                </div>
+
+            </div>
+           <div class="result-card glass">
+
+    <div class="result-label">
+        Behavioral Verification
+    </div>
+
+    <div class="score-row">
+        <div class="score">
+            {{ result.behavioral_score }}%
+        </div>
+
+        <div class="confidence">
+            confidence
+        </div>
+    </div>
+
+    <div class="progress">
+        <div
+            class="progress-bar"
+            data-width="{{ result.behavioral_score }}"
+        ></div>
+    </div>
+
+    <div class="result-description">
+        {{ result.behavioral_explanation }}
+    </div>
+
+</div>
+
+        </div>
+
+
+        <!-- FINAL TRUST -->
+
+        <div class="trust-card glass">
+
+            <div class="trust-content">
+
+                <div>
+
+                    <div class="trust-label">
+                        Final Trust Score
+                    </div>
+
+                    <div
+                        class="trust-score"
+                        id="trustScore"
+                        data-score="{{ result.trust_score }}"
+                    >
+                        0%
+                    </div>
+
+                    <div class="trust-note">
+                        Generated using Dempster-Shafer evidence fusion
+                    </div>
+
+                </div>
+
+
+                <div class="decision-area">
+
+                    {% set decision_class = result.decision|lower %}
+
+                    <div class="decision {{ decision_class }}">
+                        {{ result.decision }}
+                    </div>
+
+                    <div class="decision-description">
+                        TrustNet combines independent evidence from
+                        face and document verification before producing
+                        this final decision.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <footer>
+
+        TrustNet AI · Multi-Modal Digital Trust Intelligence<br>
+
+        Computer Engineering · Final Year Project · 2025–2026
+
+    </footer>
+
+</div>
+
+
+<script>
+    // ========================================
+// BEHAVIORAL TYPING TRACKING
+// ========================================
+
+const userIdInput = document.getElementById("userId");
+
+let keyDownTimes = {};
+let holdTimes = [];
+let flightTimes = [];
+let lastKeyUpTime = null;
+
+if (userIdInput) {
+
+    userIdInput.addEventListener("keydown", function(event) {
+
+        if (event.repeat) return;
+
+        const currentTime = performance.now();
+
+        keyDownTimes[event.key] = currentTime;
+
+        if (lastKeyUpTime !== null) {
+
+            const flightTime = currentTime - lastKeyUpTime;
+
+            if (flightTime > 0 && flightTime < 3000) {
+                flightTimes.push(flightTime);
+            }
+        }
+    });
+
+    userIdInput.addEventListener("keyup", function(event) {
+
+        const currentTime = performance.now();
+
+        if (keyDownTimes[event.key] !== undefined) {
+
+            const holdTime =
+                currentTime - keyDownTimes[event.key];
+
+            if (holdTime > 0 && holdTime < 3000) {
+                holdTimes.push(holdTime);
+            }
+
+            delete keyDownTimes[event.key];
+        }
+
+        lastKeyUpTime = currentTime;
+    });
+}
+
+    /* FILE NAME DISPLAY */
+
+    const livePhoto = document.getElementById("livePhoto");
+    const idDocument = document.getElementById("idDocument");
+
+    const liveName = document.getElementById("liveName");
+    const docName = document.getElementById("docName");
+
+
+    if (livePhoto) {
+
+        livePhoto.addEventListener("change", function () {
+
+            if (this.files.length > 0) {
+
+                liveName.textContent =
+                    "✓ " + this.files[0].name;
+
+                liveName.style.display = "block";
+
+            }
+
+        });
+
+    }
+
+
+    if (idDocument) {
+
+        idDocument.addEventListener("change", function () {
+
+            if (this.files.length > 0) {
+
+                docName.textContent =
+                    "✓ " + this.files[0].name;
+
+                docName.style.display = "block";
+
+            }
+
+        });
+
+    }
+
+
+    /* VERIFY LOADING ANIMATION */
+
+    const form = document.getElementById("verifyForm");
+    const button = document.getElementById("verifyButton");
+    const loading = document.getElementById("loading");
+
+    if (form) {
+
+        form.addEventListener("submit", function () {
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "ANALYZING IDENTITY...";
+
+            loading.classList.add("active");
+
+        });
+
+    }
+
+
+    /* PROGRESS BAR ANIMATION */
+
+    window.addEventListener("load", function () {
+
+        document
+            .querySelectorAll(".progress-bar")
+            .forEach(function (bar) {
+
+                const width =
+                    parseFloat(bar.dataset.width || 0);
+
+                setTimeout(function () {
+
+                    bar.style.width =
+                        Math.min(width, 100) + "%";
+
+                }, 300);
+
+            });
+
+
+        /* TRUST SCORE COUNTER */
+
+        const trust =
+            document.getElementById("trustScore");
+
+        if (trust) {
+
+            const target =
+                parseFloat(trust.dataset.score || 0);
+
+            let current = 0;
+
+            const duration = 1200;
+            const start = performance.now();
+
+            function animate(time) {
+
+                const progress =
+                    Math.min((time - start) / duration, 1);
+
+                const eased =
+                    1 - Math.pow(1 - progress, 3);
+
+                current = target * eased;
+
+                trust.textContent =
+                    current.toFixed(2) + "%";
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+
+            }
+
+            requestAnimationFrame(animate);
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
