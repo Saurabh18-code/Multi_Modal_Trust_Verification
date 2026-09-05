@@ -1,1435 +1,1899 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>TrustNet AI — Digital Trust Verification</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --bg: #05070b;
-            --bg2: #090d14;
-            --card: rgba(14, 20, 31, 0.72);
-            --card-hover: rgba(19, 27, 41, 0.9);
-            --border: rgba(148, 163, 184, 0.13);
-
-            --cyan: #55e6c1;
-            --cyan2: #25c7ff;
-            --violet: #8b7cff;
-            --blue: #5b8cff;
-
-            --text: #f4f7fb;
-            --muted: #8b9bb2;
-            --muted2: #63738a;
-
-            --success: #55e6c1;
-            --warning: #ffc857;
-            --danger: #ff6b81;
-
-            --shadow: 0 25px 80px rgba(0, 0, 0, .45);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            color: var(--text);
-            font-family: "Inter", sans-serif;
-            background:
-                radial-gradient(circle at 10% 10%, rgba(37, 199, 255, .08), transparent 30%),
-                radial-gradient(circle at 90% 15%, rgba(139, 124, 255, .09), transparent 28%),
-                radial-gradient(circle at 50% 100%, rgba(85, 230, 193, .05), transparent 30%),
-                var(--bg);
-            overflow-x: hidden;
-        }
-
-        /* Animated background */
-
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            width: 450px;
-            height: 450px;
-            border-radius: 50%;
-            filter: blur(110px);
-            opacity: .12;
-            pointer-events: none;
-            z-index: -1;
-            animation: floatGlow 12s ease-in-out infinite alternate;
-        }
-
-        body::before {
-            background: var(--cyan2);
-            top: -180px;
-            left: -160px;
-        }
-
-        body::after {
-            background: var(--violet);
-            right: -180px;
-            bottom: -180px;
-            animation-delay: 2s;
-        }
-
-        @keyframes floatGlow {
-            from {
-                transform: translate(0, 0) scale(1);
-            }
-            to {
-                transform: translate(45px, 35px) scale(1.15);
-            }
-        }
-
-        .page {
-            width: min(1320px, calc(100% - 40px));
-            margin: auto;
-            padding-bottom: 70px;
-        }
-
-        /* NAVBAR */
-
-        .navbar {
-            height: 86px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-        }
-
-        .logo {
-            width: 44px;
-            height: 44px;
-            border-radius: 13px;
-
-            display: grid;
-            place-items: center;
-
-            font-family: "Space Grotesk";
-            font-size: 17px;
-            font-weight: 700;
-
-            color: #04100d;
-
-            background: linear-gradient(
-                135deg,
-                var(--cyan),
-                var(--cyan2)
-            );
-
-            box-shadow:
-                0 0 30px rgba(85, 230, 193, .18),
-                inset 0 1px 1px rgba(255,255,255,.45);
-        }
-
-        .brand-name {
-            font-family: "Space Grotesk";
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -.3px;
-        }
-
-        .brand-sub {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        .system-status {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 9px 14px;
-            border-radius: 999px;
-            border: 1px solid rgba(85,230,193,.14);
-            background: rgba(85,230,193,.045);
-            color: #a7b4c7;
-            font-size: 12px;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--cyan);
-            box-shadow: 0 0 12px var(--cyan);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%,100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: .4;
-                transform: scale(.75);
-            }
-        }
-
-        /* HERO */
-
-        .hero {
-            padding: 68px 0 45px;
-            text-align: center;
-            animation: fadeUp .7s ease both;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 12px;
-            border: 1px solid rgba(85,230,193,.16);
-            background: rgba(85,230,193,.045);
-            border-radius: 999px;
-            color: var(--cyan);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: .8px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .hero h1 {
-            font-family: "Space Grotesk";
-            font-size: clamp(38px, 5vw, 68px);
-            line-height: 1.03;
-            letter-spacing: -3px;
-            max-width: 850px;
-            margin: auto;
-        }
-
-        .gradient-text {
-            background: linear-gradient(
-                100deg,
-                #ffffff 10%,
-                #72f0d0 45%,
-                #8d83ff 90%
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            max-width: 620px;
-            margin: 20px auto 0;
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.8;
-        }
-
-        /* MAIN CARD */
-
-        .glass {
-            background: linear-gradient(
-                145deg,
-                rgba(18,25,38,.78),
-                rgba(9,14,22,.72)
-            );
-
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .verification-box {
-            border-radius: 24px;
-            padding: 30px;
-            animation: fadeUp .7s .1s ease both;
-        }
-
-        .section-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            font-family: "Space Grotesk";
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .section-description {
-            color: var(--muted);
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .secure-pill {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            color: var(--cyan);
-            font-size: 11px;
-            padding: 8px 12px;
-            border-radius: 9px;
-            background: rgba(85,230,193,.05);
-            border: 1px solid rgba(85,230,193,.1);
-        }
-
-        /* FORM */
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 9px;
-            color: #aebbd0;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .input {
-            width: 100%;
-            border: 1px solid var(--border);
-            background: rgba(4,8,14,.65);
-            color: white;
-            padding: 14px 16px;
-            border-radius: 12px;
-            outline: none;
-            font-family: inherit;
-            font-size: 13px;
-            transition: .25s ease;
-        }
-
-        .input:focus {
-            border-color: rgba(85,230,193,.45);
-            box-shadow: 0 0 0 4px rgba(85,230,193,.06);
-        }
-
-        /* UPLOAD */
-
-        .upload-card {
-            position: relative;
-            min-height: 150px;
-            border: 1px dashed rgba(139,156,180,.23);
-            background: rgba(4,8,14,.45);
-            border-radius: 15px;
-            padding: 23px;
-            transition: .3s ease;
-            overflow: hidden;
-        }
-
-        .upload-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(85,230,193,.4);
-            background: rgba(12,23,29,.7);
-            box-shadow: 0 15px 40px rgba(0,0,0,.2);
-        }
-
-        .upload-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            font-size: 20px;
-            background: rgba(85,230,193,.08);
-            border: 1px solid rgba(85,230,193,.12);
-            margin-bottom: 13px;
-        }
-
-        .upload-title {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .upload-info {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 5px;
-        }
-
-        .file-input {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-name {
-            display: none;
-            margin-top: 12px;
-            color: var(--cyan);
-            font-size: 11px;
-            word-break: break-all;
-        }
-
-        /* BUTTON */
-
-        .verify-wrap {
-            margin-top: 24px;
-        }
-
-        .verify-button {
-            width: 100%;
-            border: none;
-            cursor: pointer;
-            padding: 16px;
-            border-radius: 13px;
-
-            color: #03100c;
-            font-family: "Space Grotesk";
-            font-size: 14px;
-            font-weight: 700;
-
-            background: linear-gradient(
-                100deg,
-                var(--cyan),
-                #65d9ff 55%,
-                #8e82ff
-            );
-
-            box-shadow:
-                0 10px 35px rgba(85,230,193,.13);
-
-            transition: .3s ease;
-        }
-
-        .verify-button:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 15px 45px rgba(85,230,193,.23);
-        }
-
-        .verify-button:active {
-            transform: scale(.99);
-        }
-
-        /* LOADING */
-
-        .loading {
-            display: none;
-            margin-top: 15px;
-            text-align: center;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .loader {
-            width: 22px;
-            height: 22px;
-            margin: 0 auto 9px;
-            border: 2px solid rgba(255,255,255,.12);
-            border-top-color: var(--cyan);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ANALYSIS */
-
-        .analysis {
-            margin-top: 55px;
-        }
-
-        .analysis-heading {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
-        }
-
-        .analysis-heading h2 {
-            font-family: "Space Grotesk";
-            font-size: 20px;
-        }
-
-        .line {
-            height: 1px;
-            background: var(--border);
-            flex: 1;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .result-card {
-            padding: 25px;
-            border-radius: 19px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeUp .6s ease both;
-        }
-
-        .result-card::before {
-            content: "";
-            position: absolute;
-            width: 160px;
-            height: 160px;
-            right: -90px;
-            top: -90px;
-            border-radius: 50%;
-            background: var(--cyan);
-            filter: blur(80px);
-            opacity: .06;
-        }
-
-        .result-label {
-            color: #8fa1ba;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: .8px;
-            text-transform: uppercase;
-        }
-
-        .score-row {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-            margin: 21px 0 13px;
-        }
-
-        .score {
-            font-family: "Space Grotesk";
-            font-size: 42px;
-            font-weight: 700;
-            letter-spacing: -2px;
-        }
-
-        .confidence {
-            color: var(--muted2);
-            font-size: 11px;
-        }
-
-        .progress {
-            height: 5px;
-            background: #182330;
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--cyan), #72dfff);
-            transition: width 1.2s cubic-bezier(.2,.8,.2,1);
-        }
-
-        .result-description {
-            margin-top: 15px;
-            color: #8ea1ba;
-            font-size: 12px;
-            line-height: 1.8;
-        }
-
-        /* FINAL TRUST */
-
-        .trust-card {
-            margin-top: 18px;
-            border-radius: 22px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            border-color: rgba(85,230,193,.17);
-            background:
-                radial-gradient(
-                    circle at 90% 20%,
-                    rgba(85,230,193,.08),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    145deg,
-                    rgba(17,34,35,.72),
-                    rgba(9,16,24,.75)
-                );
-        }
-
-        .trust-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .trust-label {
-            color: #8ea6c2;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .trust-score {
-            font-family: "Space Grotesk";
-            font-size: clamp(58px, 8vw, 88px);
-            font-weight: 700;
-            letter-spacing: -5px;
-            margin-top: 8px;
-            background: linear-gradient(
-                100deg,
-                white,
-                var(--cyan)
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .trust-note {
-            color: var(--muted);
-            font-size: 12px;
-            margin-top: 6px;
-        }
-
-        .decision-area {
-            text-align: right;
-        }
-
-        .decision {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: .6px;
-            text-transform: uppercase;
-            border: 1px solid rgba(255,255,255,.1);
-        }
-
-        .decision::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        .decision.verified {
-            color: var(--success);
-            background: rgba(85,230,193,.06);
-        }
-
-        .decision.uncertain {
-            color: var(--warning);
-            background: rgba(255,200,87,.06);
-        }
-
-        .decision.rejected {
-            color: var(--danger);
-            background: rgba(255,107,129,.06);
-        }
-
-        .decision-description {
-            max-width: 410px;
-            color: #7e91ac;
-            font-size: 11px;
-            line-height: 1.7;
-            margin-top: 18px;
-        }
-
-        /* FOOTER */
-
-        footer {
-            text-align: center;
-            color: #506179;
-            font-size: 10px;
-            line-height: 1.7;
-            margin-top: 65px;
-        }
-
-        /* ANIMATION */
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 800px) {
-
-            .page {
-                width: min(100% - 24px, 700px);
-            }
-
-            .navbar {
-                height: 72px;
-            }
-
-            .hero {
-                padding: 45px 0 30px;
-            }
-
-            .hero h1 {
-                letter-spacing: -2px;
-            }
-
-            .verification-box {
-                padding: 20px;
-            }
-
-            .form-grid,
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .field.full {
-                grid-column: auto;
-            }
-
-            .trust-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .decision-area {
-                text-align: left;
-            }
-        }
-
-        @media (max-width: 480px) {
-
-            .system-status {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 38px;
-            }
-
-            .score {
-                font-size: 35px;
-            }
-
-            .trust-score {
-                font-size: 62px;
-            }
-        }
-        /* =========================================
-   BEHAVIORAL TYPING VERIFICATION
-   ========================================= */
-
-.typing-card {
-    grid-column: 1 / -1;
-    padding: 20px;
-    border: 1px solid rgba(139, 156, 180, 0.16);
-    background: rgba(4, 8, 14, 0.45);
-    border-radius: 15px;
-    transition: 0.3s ease;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustNet AI — Digital Identity Verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-subtle: #f0f3f8;
+  --ink: #111827;
+  --muted: #475467;
+  --line: #e3e7ef;
+  --line-strong: #cbd5e1;
+  --blue: #315efb;
+  --blue-hover: #2148d9;
+  --blue-soft: #edf2ff;
+  --cyan: #13b8c8;
+  --green: #16a46f;
+  --green-soft: #edf9f5;
+  --amber: #d98a19;
+  --red: #dc4c4c;
+  --shadow-main: 0 18px 50px rgba(25, 38, 70, 0.08);
+  --shadow-card: 0 8px 25px rgba(25, 38, 70, 0.04);
+  --radius-l: 24px;
+  --radius-m: 16px;
+  --radius-s: 10px;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-.typing-card:hover {
-    border-color: rgba(139, 124, 255, 0.30);
-    background: rgba(10, 14, 24, 0.65);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.typing-card:focus-within {
-    border-color: rgba(139, 124, 255, 0.45);
-    box-shadow: 0 0 0 4px rgba(139, 124, 255, 0.06);
+html {
+  scroll-behavior: smooth;
 }
 
-.typing-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.typing-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 19px;
-    background: rgba(139, 124, 255, 0.09);
-    border: 1px solid rgba(139, 124, 255, 0.16);
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(49, 94, 251, 0.08), transparent 30%),
+    radial-gradient(circle at 92% 18%, rgba(19, 184, 200, 0.06), transparent 25%);
 }
 
-.typing-title {
-    font-size: 13px;
-    font-weight: 600;
+button, input {
+  font: inherit;
 }
 
-.typing-subtitle {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 4px;
+button {
+  cursor: pointer;
 }
 
-.typing-instruction {
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    background: rgba(139, 124, 255, 0.045);
-    border: 1px solid rgba(139, 124, 255, 0.09);
-    color: #aebbd0;
-    font-size: 12px;
-    line-height: 1.6;
+.page {
+  width: min(1120px, calc(100% - 36px));
+  margin: auto;
+  padding-bottom: 70px;
 }
 
-.typing-prompt {
-    color: #ffffff;
-    font-weight: 600;
+/* NAVBAR */
+.navbar {
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
 }
 
-.typing-input {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo-icon {
+  width: 48px;
+  height: 52px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 10px rgba(49, 94, 251, 0.2));
+}
+
+.brand-title {
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.brand-title .text-trust {
+  background: linear-gradient(180deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-title .text-ai {
+  background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 3px;
+}
+
+.brand-subtitle {
+  font-size: 9.5px;
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.status-readout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(22, 164, 111, 0.15);
+}
+
+/* HERO SECTION (2-COLUMN FLEX) */
+.hero {
+  padding: 32px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.hero-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 600px;
+}
+
+.hero h1 {
+  font-size: clamp(30px, 3.8vw, 44px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.hero h1 span {
+  color: var(--blue);
+}
+
+.hero-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.badge-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+/* COMPACT MOTION DIAGRAM */
+.compact-motion-wrap {
+  width: 350px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.motion-diagram-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* SVG Palette & Animation Styles */
+.flow-line-back {
+  stroke: #cbd5e1;
+  stroke-width: 1.8;
+  fill: none;
+}
+
+.flow-line-pulse {
+  stroke: var(--blue);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 4 8;
+  animation: flowDash 1.2s linear infinite;
+}
+
+@keyframes flowDash {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+
+.node-circle {
+  fill: var(--surface);
+  stroke: var(--blue);
+  stroke-width: 2;
+}
+
+.node-text {
+  fill: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.target-box {
+  fill: var(--blue-soft);
+  stroke: var(--blue);
+  stroke-width: 2;
+  rx: 10;
+}
+
+.target-text {
+  fill: var(--blue);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+/* VERIFICATION PANEL */
+.verification-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  padding: 32px;
+  box-shadow: var(--shadow-main);
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.kicker {
+  font-size: 10px;
+  color: var(--blue);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-top: 2px;
+}
+
+.section-description {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.secure-note {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface-subtle);
+  padding: 8px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* STEP TRACKER */
+.step-sequence {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.step {
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #98a2b3;
+  transition: all 0.25s ease;
+}
+
+.step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d5dbe5;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.step-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step.active {
+  background: var(--blue-soft);
+  border-color: #cdd9ff;
+  color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(49, 94, 251, 0.12);
+  animation: activePulse 2s infinite ease-in-out;
+}
+
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(49, 94, 251, 0.12); }
+  50% { box-shadow: 0 0 0 6px rgba(49, 94, 251, 0.22); }
+}
+
+.step.active .step-num {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #ffffff;
+}
+
+.step.completed {
+  background: var(--green-soft);
+  border-color: #ccefe2;
+  color: var(--green);
+}
+
+.step.completed .step-num {
+  background: var(--green);
+  border-color: var(--green);
+  color: #ffffff;
+}
+
+/* FORM ELEMENTS */
+.field {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.input-shell {
+  position: relative;
+}
+
+.input-shell svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #98a2b3;
+}
+
+.input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px 0 46px;
+  border: 1px solid #d8dee8;
+  border-radius: 14px;
+  background: #fbfcfe;
+  color: var(--ink);
+  outline: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  background: var(--surface);
+  border-color: #8da4ff;
+  box-shadow: 0 0 0 4px rgba(49, 94, 251, 0.10);
+}
+
+.btn {
+  border: 0;
+  border-radius: 14px;
+  min-height: 48px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 13.5px;
+  transition: all 0.18s ease;
+}
+
+.btn-primary {
+  width: 100%;
+  color: #ffffff;
+  background: var(--blue);
+  box-shadow: 0 10px 22px rgba(49, 94, 251, 0.22);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  background: var(--blue-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-outline {
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid #d7dde7;
+}
+
+.btn-outline:hover {
+  border-color: #aeb9ca;
+  background: #f8fafc;
+}
+
+/* CAMERA SCREEN DESIGN */
+.camera-card {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.camera-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.camera-heading {
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.camera-heading svg {
+  color: var(--blue);
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #000000;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0.3; } }
+
+.camera-wrapper {
+  position: relative;
+  width: min(650px, 100%);
+  margin: auto;
+  aspect-ratio: 4/3;
+  background: #080c14;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 4px solid #ffffff;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12);
+}
+
+.camera-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Viewfinder Corner Overlay */
+.viewfinder {
+  position: absolute;
+  inset: 20px;
+  pointer-events: none;
+}
+
+.viewfinder span {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+}
+
+.viewfinder span:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; border-radius: 6px 0 0 0; }
+.viewfinder span:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 6px 0 0; }
+.viewfinder span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
+.viewfinder span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 0 6px 0; }
+
+/* Guides */
+.face-guide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.guide-shape {
+  transition: all 0.3s ease;
+}
+
+.guide-shape.oval {
+  width: 42%;
+  height: 64%;
+  border: 2.5px dashed rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+}
+
+.guide-shape.rect {
+  width: 78%;
+  height: 56%;
+  border: 2.5px dashed rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+}
+
+.face-status {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8, 12, 20, 0.88);
+  color: #ffffff;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(4px);
+}
+
+.scan-sweep {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  top: 0;
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  opacity: 0;
+}
+
+.camera-wrapper.scanning .scan-sweep {
+  opacity: 0.8;
+  animation: sweep 2.2s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  0% { top: 8%; }
+  50% { top: 92%; }
+  100% { top: 8%; }
+}
+
+#capturedPhoto {
+  width: min(650px, 100%);
+  margin: auto;
+  border-radius: 18px;
+  display: block;
+}
+
+/* CIRCULAR CAPTURE BUTTON */
+.camera-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.shutter-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 4px solid var(--blue);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px rgba(49, 94, 251, 0.25);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.shutter-btn::after {
+  content: "";
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--blue);
+  transition: transform 0.15s ease;
+}
+
+.shutter-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.shutter-btn:hover:not(:disabled)::after {
+  transform: scale(0.92);
+}
+
+.shutter-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: var(--line-strong);
+}
+
+.shutter-btn:disabled::after {
+  background: var(--line-strong);
+}
+
+.shutter-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.fallback-box {
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.fallback-btn {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: underline;
+  padding: 0 4px;
+}
+
+.success-message {
+  display: none;
+  margin-top: 12px;
+  background: var(--green-soft);
+  color: #087653;
+  border: 1px solid #ccefe2;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#idSection {
+  display: none;
+  margin-top: 18px;
+}
+
+.upload-card {
+  border: 1px dashed #bdc7d6;
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 20px;
+  text-align: center;
+}
+
+.upload-card svg {
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.upload-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.upload-info {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.file-name {
+  font-size: 11.5px;
+  color: var(--green);
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+#verifySection {
+  display: none;
+  margin-top: 20px;
+}
+
+.privacy-indicators {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.privacy-item {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading {
+  text-align: center;
+  display: none;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.loading.active {
+  display: block;
+}
+
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid #dfe4ec;
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  margin-top: 18px;
+  background: #fff2f2;
+  border: 1px solid #f3caca;
+  color: #a62f2f;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* RESULTS ANALYSIS */
+.analysis {
+  margin-top: 50px;
+}
+
+#results {
+  display: block;
+  scroll-margin-top: 25px;
+}
+
+.analysis-heading {
+  margin-bottom: 20px;
+}
+
+.analysis-heading h2 {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-top: 2px;
+}
+
+/* Hero Trust Card */
+.hero-trust-card {
+  background: var(--ink);
+  color: #ffffff;
+  border-radius: var(--radius-l);
+  padding: 32px;
+  box-shadow: 0 16px 40px rgba(17, 24, 39, 0.15);
+  margin-bottom: 24px;
+}
+
+.trust-hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.trust-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  flex: none;
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(#4b70ff calc(var(--pct, 0) * 1%), #263247 0);
+  position: relative;
+}
+
+.ring::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  background: var(--ink);
+  border-radius: 50%;
+}
+
+.ring-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  font-size: 22px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+}
+
+.trust-hero-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #9aa7ba;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.trust-hero-title {
+  font-size: 22px;
+  font-weight: 900;
+  margin-top: 2px;
+}
+
+.decision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+}
+
+.decision-badge.verified {
+  color: #70e2bb;
+  background: rgba(22, 164, 111, 0.15);
+  border-color: rgba(112, 226, 187, 0.22);
+}
+
+.decision-badge.flagged,
+.decision-badge.uncertain {
+  color: #f4c66e;
+  background: rgba(217, 138, 25, 0.15);
+  border-color: rgba(244, 198, 110, 0.22);
+}
+
+.decision-badge.rejected {
+  color: #ff8e8e;
+  background: rgba(220, 76, 76, 0.15);
+  border-color: rgba(255, 142, 142, 0.22);
+}
+
+/* Individual Signals Grid */
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.result-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 12px 0 8px;
+}
+
+.score {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  font-family: var(--font-mono);
+}
+
+.confidence {
+  font-size: 10px;
+  color: #98a2b3;
+  font-weight: 600;
+}
+
+.meter {
+  height: 6px;
+  background: #edf0f5;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  border-radius: inherit;
+  transition: width 1s ease-out;
+}
+
+.result-description {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+footer {
+  margin-top: 55px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: #98a2b3;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+/* RESPONSIVE & MOBILE DESIGN */
+@media (max-width: 850px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .compact-motion-wrap {
     width: 100%;
-    min-height: 95px;
-    resize: vertical;
-    border: 1px solid var(--border);
-    background: rgba(4, 8, 14, 0.7);
-    color: white;
-    padding: 14px 16px;
-    border-radius: 12px;
-    outline: none;
-    font-family: inherit;
-    font-size: 13px;
-    line-height: 1.6;
-    transition: 0.25s ease;
+    max-width: 350px;
+    justify-content: flex-start;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-hero-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
-.typing-input::placeholder {
-    color: #59677b;
+@media (max-width: 480px) {
+  .compact-motion-wrap {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    margin: 10px auto 20px;
+  }
 }
 
-.typing-input:focus {
-    border-color: rgba(139, 124, 255, 0.5);
-    box-shadow: 0 0 0 4px rgba(139, 124, 255, 0.06);
-}
+@media (max-width: 620px) {
+  .page {
+    width: calc(100% - 24px);
+  }
 
-.typing-meta {
+  .navbar {
+    height: 70px;
+  }
+
+  .status-readout {
+    display: none;
+  }
+
+  .verification-box {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step-sequence {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    color: var(--muted2);
-    font-size: 10px;
+    gap: 4px;
+  }
+
+  .step {
+    padding: 8px;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .step-name {
+    display: none;
+  }
+
+  footer {
+    flex-direction: column;
+  }
 }
 
-#typingStatus {
-    color: var(--violet);
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
-    </style>
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid #9db0ff;
+  outline-offset: 3px;
+}
+</style>
 </head>
-
 <body>
 
 <div class="page">
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="brand">
+      <!-- ACCURATE SHIELD LOGO (TRANSPARENT BACKGROUND, SHIELD + 3-SECTOR BIOMETRIC DESIGN) -->
+      <svg class="brand-logo-icon" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="shieldFrame" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="30%" stop-color="#cbd5e1"/>
+            <stop offset="70%" stop-color="#64748b"/>
+            <stop offset="100%" stop-color="#1e293b"/>
+          </linearGradient>
+          <linearGradient id="shieldInnerBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0284c7"/>
+            <stop offset="40%" stop-color="#1e40af"/>
+            <stop offset="100%" stop-color="#030712"/>
+          </linearGradient>
+          <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
 
-    <!-- NAVBAR -->
+        <!-- Outer Silver Metallic Shield Bezel -->
+        <path d="M100 8 L185 42 V118 C185 170 146 204 100 218 C54 204 15 170 15 118 V42 Z" fill="url(#shieldFrame)"/>
+        
+        <!-- Inner Deep Blue Metallic Shield Base -->
+        <path d="M100 20 L173 50 V114 C173 159 139 190 100 202 C61 190 27 159 27 114 V50 Z" fill="url(#shieldInnerBlue)"/>
 
-    <nav class="navbar">
+        <!-- Y-Split Divider Lines forming 3 Sectors (Network Top, Fingerprint Left, Eye Right) -->
+        <path d="M100 100 L100 22 M100 100 L32 135 M100 100 L168 135" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
 
-        <div class="brand">
+        <!-- TOP SECTOR: Neural Network & Connected Nodes -->
+        <g stroke="url(#cyanGlow)" stroke-width="2" fill="none">
+          <path d="M100 35 L75 55 M100 35 L125 55 M100 35 L100 65 M75 55 L55 45 M125 55 L145 45 M75 55 L85 75 M125 55 L115 75"/>
+          <circle cx="100" cy="35" r="4" fill="#ffffff"/>
+          <circle cx="75" cy="55" r="3.5" fill="#38bdf8"/>
+          <circle cx="125" cy="55" r="3.5" fill="#38bdf8"/>
+          <circle cx="55" cy="45" r="3" fill="#38bdf8"/>
+          <circle cx="145" cy="45" r="3" fill="#38bdf8"/>
+          <circle cx="85" cy="75" r="3" fill="#38bdf8"/>
+          <circle cx="115" cy="75" r="3" fill="#38bdf8"/>
+        </g>
 
-            <div class="logo">
-                TN
-            </div>
+        <!-- BOTTOM-LEFT SECTOR: Biometric Fingerprint Arcs -->
+        <g stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.85">
+          <path d="M42 120 C48 102 68 98 80 110"/>
+          <path d="M46 132 C54 112 76 108 86 122"/>
+          <path d="M52 145 C60 124 82 120 90 138"/>
+          <path d="M60 158 C68 138 88 136 94 152"/>
+        </g>
 
-            <div>
-                <div class="brand-name">
-                    TrustNet AI
-                </div>
+        <!-- BOTTOM-RIGHT SECTOR: Cybernetic Eye & Circuit Lines -->
+        <g stroke="#38bdf8" stroke-width="2" fill="none">
+          <!-- Eye Outline -->
+          <path d="M112 135 C125 118 152 118 162 135 C152 150 125 150 112 135 Z" stroke="#38bdf8" stroke-width="2.2"/>
+          <!-- Iris & Pupil -->
+          <circle cx="137" cy="134" r="8" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+          <circle cx="137" cy="134" r="3.5" fill="#ffffff"/>
+          <!-- Circuit Lines Below Eye -->
+          <path d="M120 152 V168 L130 178 M145 152 V175 M160 148 V162 L152 172" stroke-width="1.8" opacity="0.8"/>
+          <circle cx="130" cy="178" r="2" fill="#38bdf8"/>
+          <circle cx="145" cy="175" r="2" fill="#38bdf8"/>
+        </g>
+      </svg>
 
-                <div class="brand-sub">
-                    Digital Trust Intelligence
-                </div>
-            </div>
+      <div>
+        <div class="brand-title"><span class="text-trust">TrustNet</span><span class="text-ai">AI</span></div>
+        <div class="brand-subtitle">Digital Trust Intelligence</div>
+      </div>
+    </div>
+    <div class="status-readout">
+      <span class="status-dot"></span> System Operational
+    </div>
+  </nav>
 
-        </div>
+  <!-- HERO SECTION WITH COMPACT MOTION DIAGRAM ON THE RIGHT -->
+  <section class="hero">
+    <div class="hero-main">
+      <h1>Verify identity. <span>Build trust.</span></h1>
+      <div class="hero-badges">
+        <div class="badge-pill"><span class="badge-pill-dot"></span> Face Match</div>
+        <div class="badge-pill"><span class="badge-pill-dot"></span> Document Check</div>
+        <div class="badge-pill"><span class="badge-pill-dot"></span> Behavior Signal</div>
+      </div>
+    </div>
 
-        <div class="system-status">
-            <span class="status-dot"></span>
-            System Operational
-        </div>
+    <!-- COMPACT MOTION DIAGRAM -->
+    <div class="compact-motion-wrap">
+      <svg class="motion-diagram-svg" viewBox="0 0 380 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Base Curved Connecting Lines -->
+        <path d="M 48 22 C 150 22, 180 64, 260 64" class="flow-line-back"/>
+        <path d="M 48 62 L 260 64" class="flow-line-back"/>
+        <path d="M 48 102 C 150 102, 180 64, 260 64" class="flow-line-back"/>
 
-    </nav>
+        <!-- Pulsing Lines -->
+        <path d="M 48 22 C 150 22, 180 64, 260 64" class="flow-line-pulse"/>
+        <path d="M 48 62 L 260 64" class="flow-line-pulse"/>
+        <path d="M 48 102 C 150 102, 180 64, 260 64" class="flow-line-pulse"/>
 
+        <!-- Fast Motion Particles -->
+        <circle r="3" fill="#315efb">
+          <animateMotion dur="1.2s" repeatCount="indefinite" path="M 48 22 C 150 22, 180 64, 260 64"/>
+        </circle>
+        <circle r="3" fill="#315efb">
+          <animateMotion dur="1.0s" repeatCount="indefinite" path="M 48 62 L 260 64"/>
+        </circle>
+        <circle r="3" fill="#315efb">
+          <animateMotion dur="1.4s" repeatCount="indefinite" path="M 48 102 C 150 102, 180 64, 260 64"/>
+        </circle>
 
-    <!-- HERO -->
+        <!-- Face Node -->
+        <circle cx="36" cy="22" r="12" class="node-circle"/>
+        <text x="36" y="44" text-anchor="middle" class="node-text">FACE</text>
 
-    <section class="hero">
+        <!-- Document Node -->
+        <circle cx="36" cy="62" r="12" class="node-circle"/>
+        <text x="36" y="84" text-anchor="middle" class="node-text">DOCUMENT</text>
 
-        <div class="eyebrow">
-            ✦ AI-POWERED IDENTITY SECURITY
-        </div>
+        <!-- Behavior Node -->
+        <circle cx="36" cy="102" r="12" class="node-circle"/>
+        <text x="36" y="124" text-anchor="middle" class="node-text">BEHAVIOR</text>
 
-        <h1>
-            Verify identity with
-            <span class="gradient-text">
-                intelligent trust.
-            </span>
-        </h1>
+        <!-- Target Box: TRUST SCORE (Harmonized Blue Theme) -->
+        <rect x="260" y="42" width="104" height="44" class="target-box"/>
+        <text x="312" y="61" text-anchor="middle" class="target-text">TRUST</text>
+        <text x="312" y="74" text-anchor="middle" class="target-text">SCORE</text>
+      </svg>
+    </div>
+  </section>
 
-        <p>
-            TrustNet AI combines facial verification, document intelligence
-            and evidence fusion to determine digital identity confidence.
-        </p>
+  <!-- MAIN VERIFICATION CONTAINER -->
+  <section class="verification-box" id="verify">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Secure verification</div>
+        <div class="section-title">Identity verification</div>
+        <div class="section-description">Complete each step in sequence</div>
+      </div>
+      <div class="secure-note">🔒 On-Device Verification Flow</div>
+    </div>
 
-    </section>
-
+    <!-- STEP TRACKER -->
+    <div class="step-sequence">
+      <div class="step active" id="step1">
+        <div class="step-num">01</div>
+        <div class="step-name">Identity</div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-num">02</div>
+        <div class="step-name">Facial Scan</div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-num">03</div>
+        <div class="step-name">Document Check</div>
+      </div>
+      <div class="step" id="step4">
+        <div class="step-num">04</div>
+        <div class="step-name">Verification</div>
+      </div>
+    </div>
 
     <!-- VERIFICATION FORM -->
+    <form method="POST" enctype="multipart/form-data" id="verifyForm">
+      <!-- STEP 1: IDENTITY INPUT -->
+      <div class="field" id="userSection">
+        <label class="field-label" for="userId">Full Name, Student ID, or Username</label>
+        <div class="input-shell">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+          </svg>
+          <input class="input" type="text" name="user_id" id="userId" placeholder="e.g., user-id or name" required autocomplete="off">
+        </div>
+        <input type="hidden" name="typing_data" id="typingData">
+        <button type="button" class="btn btn-primary" id="continueBtn" style="margin-top:16px">Continue to Facial Scan →</button>
+      </div>
 
-    <section class="verification-box glass">
-
-        <div class="section-head">
-
-            <div>
-                <div class="section-title">
-                    Identity Verification
-                </div>
-
-                <div class="section-description">
-                    Submit your identity evidence for multi-modal analysis.
-                </div>
+      <!-- STEP 2 & 3: CAMERA CAPTURE -->
+      <div id="cameraSection" style="display:none">
+        <div class="camera-card">
+          <div class="camera-header-row">
+            <div class="camera-heading" id="cameraTitle">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 8a2 2 0 0 1 2-2h1l1.2-2h7.6L17 6h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
+                <circle cx="12" cy="13" r="3.5"/>
+              </svg>
+              <span>Facial Scan Biometrics</span>
             </div>
+            <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
+          </div>
 
-            <div class="secure-pill">
-                🔒 Secure Processing
+          <div class="camera-wrapper" id="cameraWrapper">
+            <video id="camera" autoplay playsinline></video>
+            <div class="scan-sweep"></div>
+            <div class="viewfinder">
+              <span></span><span></span><span></span><span></span>
             </div>
+            <div id="faceGuide" class="face-guide">
+              <div id="guideShape" class="guide-shape oval"></div>
+            </div>
+            <div id="faceStatus" class="face-status" aria-live="polite">Center your face</div>
+          </div>
 
+          <img id="capturedPhoto" style="display:none" alt="Captured verification frame">
+          <canvas id="photoCanvas" style="display:none"></canvas>
+
+          <div class="camera-controls">
+            <button type="button" class="shutter-btn" id="capturePhoto" disabled aria-label="Capture"></button>
+            <div class="shutter-label" id="shutterLabel">◉ CAPTURE SELFIE</div>
+            <button type="button" class="btn btn-outline" id="retakePhoto" style="display:none">↻ Retake Frame</button>
+
+            <!-- Camera Permission Fallback -->
+            <div class="fallback-box" id="fallbackBox">
+              Camera trouble? <label class="fallback-btn" for="fallbackFileInput">Upload file manually</label>
+              <input type="file" id="fallbackFileInput" accept="image/*" style="display:none">
+            </div>
+          </div>
+
+          <div class="success-message" id="selfieSuccess"></div>
+          <input type="file" name="live_photo" id="livePhoto" accept="image/*" style="display:none">
         </div>
 
-
-        <form method="POST"
-              enctype="multipart/form-data"
-              id="verifyForm">
-
-            <div class="form-grid">
-
-                <!-- USER ID -->
-
-                <div class="field full">
-
-                    <label>
-                        USER IDENTIFIER
-                    </label>
-
-                    <input
-                      class="input"
-                     type="text"
-                      name="user_id"
-                      id="userId"
-                      placeholder="Enter Name + Surname or Name + Number"
-                     required
-                      autocomplete="off"
->
-
-                </div>
-
-
-                <!-- LIVE PHOTO -->
-
-                <div class="field">
-
-                    <label>
-                        LIVE PHOTO
-                    </label>
-
-                    <div class="upload-card">
-
-                        <div class="upload-icon">
-                            ◉
-                        </div>
-
-                        <div class="upload-title">
-                            Upload live photograph
-                        </div>
-
-                        <div class="upload-info">
-                            JPG / PNG • Clear face required
-                        </div>
-
-                        <div class="file-name" id="liveName"></div>
-
-                        <input
-                            class="file-input"
-                            type="file"
-                            name="live_photo"
-                            id="livePhoto"
-                            accept="image/*"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <!-- ID DOCUMENT -->
-
-                <div class="field">
-
-                    <label>
-                        ID DOCUMENT
-                    </label>
-
-                    <div class="upload-card">
-
-                        <div class="upload-icon">
-                            ▣
-                        </div>
-
-                        <div class="upload-title">
-                            Upload identity document
-                        </div>
-
-                        <div class="upload-info">
-                            Aadhaar / PAN / Passport • JPG / PNG
-                        </div>
-
-                        <div class="file-name" id="docName"></div>
-
-                        <input
-                            class="file-input"
-                            type="file"
-                            name="id_document"
-                            id="idDocument"
-                            accept="image/*"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-                
-
-
-            </div>
-
-
-            <div class="verify-wrap">
-
-                <button
-                    class="verify-button"
-                    type="submit"
-                    id="verifyButton"
-                >
-                    VERIFY DIGITAL IDENTITY &nbsp; →
-                </button>
-
-                <div class="loading" id="loading">
-
-                    <div class="loader"></div>
-
-                    TrustNet AI is analyzing your identity evidence...
-
-                </div>
-
-            </div>
-
-        </form>
-
-    </section>
-
-
-    {% if result %}
-
-    <!-- RESULTS -->
-
-    <section class="analysis">
-
-        <div class="analysis-heading">
-
-            <h2>
-                Verification Analysis
-            </h2>
-
-            <div class="line"></div>
-
+        <div id="idSection">
+          <div class="field">
+            <input type="file" name="id_document" id="idDocument" accept="image/*" required style="display:none">
+            <div class="file-name" id="docName"></div>
+          </div>
         </div>
 
+        <!-- STEP 4: VERIFY BUTTON -->
+        <div id="verifySection">
+          <button class="btn btn-primary" type="submit" id="verifyButton">Verify Identity →</button>
+          
+          <div class="privacy-indicators">
+            <div class="privacy-item">🔒 Secure processing</div>
+            <div class="privacy-item">✓ Multi-signal verification</div>
+            <div class="privacy-item">✓ Encrypted transit</div>
+          </div>
 
-        <div class="result-grid">
+          <div class="loading" id="loading" aria-live="polite">
+            <div class="loader"></div>
+            <div id="loadingText">Collecting signals…</div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
 
-            <!-- FACE -->
+  <!-- ERROR DISPLAY -->
+  {% if result and result is not mapping %}
+  <div class="error-message">
+    <strong>⚠️ Verification Error</strong><br>
+    {{ result }}
+  </div>
+  {% endif %}
 
-            <div class="result-card glass">
-
-                <div class="result-label">
-                    Face Verification
-                </div>
-
-                <div class="score-row">
-
-                    <div class="score">
-                        {{ result.face_score }}%
-                    </div>
-
-                    <div class="confidence">
-                        confidence
-                    </div>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="{{ result.face_score }}"
-                    ></div>
-
-                </div>
-
-                <div class="result-description">
-                    {{ result.face_explanation }}
-                </div>
-
-            </div>
-
-
-            <!-- DOCUMENT -->
-
-            <div class="result-card glass">
-
-                <div class="result-label">
-                    Document Verification
-                </div>
-
-                <div class="score-row">
-
-                    <div class="score">
-                        {{ result.document_score }}%
-                    </div>
-
-                    <div class="confidence">
-                        confidence
-                    </div>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        data-width="{{ result.document_score }}"
-                    ></div>
-
-                </div>
-
-                <div class="result-description">
-                    {{ result.document_explanation }}
-                </div>
-
-            </div>
-           <div class="result-card glass">
-
-    <div class="result-label">
-        Behavioral Verification
+  <!-- RESULTS SECTION -->
+  {% if result is mapping %}
+  <section class="analysis" id="results">
+    <div class="analysis-heading">
+      <div class="kicker">Verification Analysis</div>
+      <h2>Your Trust Result</h2>
     </div>
 
-    <div class="score-row">
-        <div class="score">
-            {{ result.behavioral_score }}%
+    <!-- Hero Trust Card -->
+    <div class="hero-trust-card">
+      <div class="trust-hero-content">
+        <div class="trust-hero-left">
+          <div class="ring-wrap" id="trustRing" style="--pct:{{ result.trust_score }}">
+            <div class="ring"></div>
+            <div class="ring-value" data-target="{{ result.trust_score }}">{{ result.trust_score }}%</div>
+          </div>
+          <div>
+            <div class="trust-hero-label">Overall Trust Score</div>
+            <div class="trust-hero-title">Multi-Signal Synthesis</div>
+          </div>
         </div>
 
-        <div class="confidence">
-            confidence
+        {% set decision_class = result.decision|lower|replace(" ", "-") %}
+        <div class="decision-badge {{ decision_class }}">
+          ● {{ result.decision }}
         </div>
+      </div>
     </div>
 
-    <div class="progress">
-        <div
-            class="progress-bar"
-            data-width="{{ result.behavioral_score }}"
-        ></div>
-    </div>
+    <!-- Individual Signals Grid -->
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-label">Face Match</div>
+        <div class="score-row">
+          <div class="score" data-target="{{ result.face_score }}">{{ result.face_score }}%</div>
+          <div class="confidence">confidence</div>
+        </div>
+        <div class="meter"><div class="meter-fill" data-width="{{ result.face_score }}"></div></div>
+        <div class="result-description">{{ result.face_explanation }}</div>
+      </div>
 
-    <div class="result-description">
-        {{ result.behavioral_explanation }}
-    </div>
+      <div class="result-card">
+        <div class="result-label">Document Check</div>
+        <div class="score-row">
+          <div class="score" data-target="{{ result.document_score }}">{{ result.document_score }}%</div>
+          <div class="confidence">confidence</div>
+        </div>
+        <div class="meter"><div class="meter-fill" data-width="{{ result.document_score }}"></div></div>
+        <div class="result-description">{{ result.document_explanation }}</div>
+      </div>
 
+      <div class="result-card">
+        <div class="result-label">Behavioral Signal</div>
+        <div class="score-row">
+          <div class="score" data-target="{{ result.behavioral_score }}">{{ result.behavioral_score }}%</div>
+          <div class="confidence">confidence</div>
+        </div>
+        <div class="meter"><div class="meter-fill" data-width="{{ result.behavioral_score }}"></div></div>
+        <div class="result-description">{{ result.behavioral_explanation }}</div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <footer>
+    <div>TrustNet AI · Digital Identity Verification</div>
+    <div>Computer Engineering Project · 2025–2026</div>
+  </footer>
 </div>
 
-        </div>
-
-
-        <!-- FINAL TRUST -->
-
-        <div class="trust-card glass">
-
-            <div class="trust-content">
-
-                <div>
-
-                    <div class="trust-label">
-                        Final Trust Score
-                    </div>
-
-                    <div
-                        class="trust-score"
-                        id="trustScore"
-                        data-score="{{ result.trust_score }}"
-                    >
-                        0%
-                    </div>
-
-                    <div class="trust-note">
-                        Generated using Dempster-Shafer evidence fusion
-                    </div>
-
-                </div>
-
-
-                <div class="decision-area">
-
-                    {% set decision_class = result.decision|lower %}
-
-                    <div class="decision {{ decision_class }}">
-                        {{ result.decision }}
-                    </div>
-
-                    <div class="decision-description">
-                        TrustNet combines independent evidence from
-                        face and document verification before producing
-                        this final decision.
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    {% endif %}
-
-
-    <footer>
-
-        TrustNet AI · Multi-Modal Digital Trust Intelligence<br>
-
-        Computer Engineering · Final Year Project · 2025–2026
-
-    </footer>
-
-</div>
-
-
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
 <script>
-    // ========================================
-// BEHAVIORAL TYPING TRACKING
-// ========================================
+document.addEventListener("DOMContentLoaded", function () {
+  const userId = document.getElementById("userId");
+  const typingData = document.getElementById("typingData");
+  const continueBtn = document.getElementById("continueBtn");
 
-const userIdInput = document.getElementById("userId");
+  const cameraSection = document.getElementById("cameraSection");
+  const capturePhoto = document.getElementById("capturePhoto");
+  const retakePhoto = document.getElementById("retakePhoto");
+  const shutterLabel = document.getElementById("shutterLabel");
 
-let keyDownTimes = {};
-let holdTimes = [];
-let flightTimes = [];
-let lastKeyUpTime = null;
+  const camera = document.getElementById("camera");
+  const canvas = document.getElementById("photoCanvas");
+  const capturedPhoto = document.getElementById("capturedPhoto");
+  const cameraWrapper = document.getElementById("cameraWrapper");
+  const guideShape = document.getElementById("guideShape");
 
-if (userIdInput) {
+  const livePhoto = document.getElementById("livePhoto");
+  const selfieSuccess = document.getElementById("selfieSuccess");
+  const faceStatus = document.getElementById("faceStatus");
 
-    userIdInput.addEventListener("keydown", function(event) {
+  const idSection = document.getElementById("idSection");
+  const idDocument = document.getElementById("idDocument");
+  const docName = document.getElementById("docName");
 
-        if (event.repeat) return;
+  const verifySection = document.getElementById("verifySection");
+  const verifyForm = document.getElementById("verifyForm");
+  const verifyButton = document.getElementById("verifyButton");
+  const loading = document.getElementById("loading");
 
-        const currentTime = performance.now();
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+  const step4 = document.getElementById("step4");
 
-        keyDownTimes[event.key] = currentTime;
+  const fallbackFileInput = document.getElementById("fallbackFileInput");
 
-        if (lastKeyUpTime !== null) {
+  let stream = null;
+  let selfieCaptured = false;
+  let documentCaptured = false;
+  let faceDetected = false;
+  let faceDetectionRunning = false;
 
-            const flightTime = currentTime - lastKeyUpTime;
+  // BEHAVIORAL TRACKING
+  let keyDownTimes = {};
+  let keystrokes = [];
 
-            if (flightTime > 0 && flightTime < 3000) {
-                flightTimes.push(flightTime);
+  userId.addEventListener("keydown", function (event) {
+    if (event.repeat) return;
+    keyDownTimes[event.key] = performance.now();
+  });
+
+  userId.addEventListener("keyup", function (event) {
+    if (keyDownTimes[event.key] !== undefined) {
+      const pressTime = keyDownTimes[event.key];
+      const releaseTime = performance.now();
+      keystrokes.push([event.key, pressTime, releaseTime]);
+      delete keyDownTimes[event.key];
+      typingData.value = JSON.stringify(keystrokes);
+    }
+  });
+
+  userId.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      continueBtn.click();
+    }
+  });
+
+  // MEDIAPIPE FACE DETECTION WITH TRY...CATCH FALLBACK
+  let faceDetection = null;
+
+  try {
+    if (typeof FaceDetection !== "undefined") {
+      faceDetection = new FaceDetection({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
+      });
+
+      faceDetection.setOptions({
+        model: "short",
+        minDetectionConfidence: 0.6
+      });
+
+      faceDetection.onResults(function (results) {
+        if (!stream || selfieCaptured) return;
+
+        if (results.detections && results.detections.length === 1) {
+          const box = results.detections[0].boundingBox;
+          const insideGuide = box.xCenter > 0.30 && box.xCenter < 0.70 && box.yCenter > 0.25 && box.yCenter < 0.75;
+
+          if (insideGuide) {
+            faceDetected = true;
+            if (faceStatus) {
+              faceStatus.textContent = "● Face detected — Perfect, ready to capture";
+              faceStatus.style.background = "rgba(22, 164, 111, 0.92)";
             }
+            capturePhoto.disabled = false;
+          } else {
+            faceDetected = false;
+            if (faceStatus) {
+              faceStatus.textContent = "Center your face";
+              faceStatus.style.background = "rgba(217, 138, 25, 0.92)";
+            }
+            capturePhoto.disabled = true;
+          }
+        } else {
+          faceDetected = false;
+          if (faceStatus) {
+            faceStatus.textContent = results.detections && results.detections.length > 1 ? "Only one face should be visible" : "Looking for face…";
+            faceStatus.style.background = "rgba(220, 76, 76, 0.85)";
+          }
+          capturePhoto.disabled = true;
         }
-    });
+      });
+    }
+  } catch (err) {
+    console.warn("MediaPipe Face Detection failed to initialize:", err);
+    capturePhoto.disabled = false;
+    faceDetected = true;
+  }
 
-    userIdInput.addEventListener("keyup", function(event) {
+  async function detectFace() {
+    if (!stream || selfieCaptured) {
+      faceDetectionRunning = false;
+      return;
+    }
+    if (faceDetectionRunning) return;
+    faceDetectionRunning = true;
 
-        const currentTime = performance.now();
+    async function processFrame() {
+      if (!stream || !camera.srcObject || selfieCaptured) {
+        faceDetectionRunning = false;
+        return;
+      }
+      try {
+        if (faceDetection) await faceDetection.send({ image: camera });
+      } catch (e) {
+        console.error(e);
+      }
 
-        if (keyDownTimes[event.key] !== undefined) {
+      if (stream && camera.srcObject && !selfieCaptured) {
+        requestAnimationFrame(processFrame);
+      } else {
+        faceDetectionRunning = false;
+      }
+    }
+    processFrame();
+  }
 
-            const holdTime =
-                currentTime - keyDownTimes[event.key];
-
-            if (holdTime > 0 && holdTime < 3000) {
-                holdTimes.push(holdTime);
-            }
-
-            delete keyDownTimes[event.key];
-        }
-
-        lastKeyUpTime = currentTime;
-    });
-}
-
-    /* FILE NAME DISPLAY */
-
-    const livePhoto = document.getElementById("livePhoto");
-    const idDocument = document.getElementById("idDocument");
-
-    const liveName = document.getElementById("liveName");
-    const docName = document.getElementById("docName");
-
-
-    if (livePhoto) {
-
-        livePhoto.addEventListener("change", function () {
-
-            if (this.files.length > 0) {
-
-                liveName.textContent =
-                    "✓ " + this.files[0].name;
-
-                liveName.style.display = "block";
-
-            }
-
-        });
-
+  continueBtn.addEventListener("click", async function () {
+    if (userId.value.trim() === "") {
+      alert("Please enter your name or user ID.");
+      userId.focus();
+      return;
     }
 
+    step1.classList.remove("active");
+    step1.classList.add("completed");
+    step2.classList.add("active");
 
-    if (idDocument) {
+    continueBtn.style.display = "none";
+    cameraSection.style.display = "block";
 
-        idDocument.addEventListener("change", function () {
+    await startCameraFunction();
+  });
 
-            if (this.files.length > 0) {
+  async function startCameraFunction() {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera WebRTC API not supported on this browser.");
+        return;
+      }
+      if (stream) return;
 
-                docName.textContent =
-                    "✓ " + this.files[0].name;
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      });
 
-                docName.style.display = "block";
+      camera.srcObject = stream;
+      await camera.play();
 
-            }
+      camera.style.display = "block";
+      if (cameraWrapper) cameraWrapper.style.display = "block";
 
-        });
+      capturePhoto.disabled = true;
+      if (cameraWrapper) cameraWrapper.classList.add("scanning");
 
+      if (faceStatus) {
+        faceStatus.textContent = "Looking for face…";
+        faceStatus.style.background = "rgba(8, 12, 20, 0.88)";
+      }
+
+      detectFace();
+    } catch (err) {
+      console.error("Camera access failed:", err);
+      if (faceStatus) {
+        faceStatus.textContent = "Camera blocked or unavailable — use manual upload below";
+        faceStatus.style.background = "rgba(220, 76, 76, 0.85)";
+      }
+    }
+  }
+
+  function showDocumentCaptureMode() {
+    faceDetected = false;
+    if (cameraWrapper) cameraWrapper.classList.remove("scanning");
+
+    if (guideShape) {
+      guideShape.classList.remove("oval");
+      guideShape.classList.add("rect");
     }
 
-
-    /* VERIFY LOADING ANIMATION */
-
-    const form = document.getElementById("verifyForm");
-    const button = document.getElementById("verifyButton");
-    const loading = document.getElementById("loading");
-
-    if (form) {
-
-        form.addEventListener("submit", function () {
-
-            button.disabled = true;
-
-            button.innerHTML =
-                "ANALYZING IDENTITY...";
-
-            loading.classList.add("active");
-
-        });
-
+    if (faceStatus) {
+      faceStatus.textContent = "Position your ID document inside rectangular frame";
+      faceStatus.style.background = "rgba(8, 12, 20, 0.88)";
     }
 
+    capturedPhoto.style.display = "none";
+    if (cameraWrapper) cameraWrapper.style.display = "block";
+    camera.style.display = "block";
 
-    /* PROGRESS BAR ANIMATION */
+    if (stream) {
+      camera.srcObject = stream;
+      camera.play().catch(e => console.error(e));
+    }
 
-    window.addEventListener("load", function () {
+    const cameraTitle = document.getElementById("cameraTitle");
+    if (cameraTitle) cameraTitle.lastElementChild.textContent = "Document Check Verification";
 
-        document
-            .querySelectorAll(".progress-bar")
-            .forEach(function (bar) {
+    capturePhoto.disabled = false;
+    shutterLabel.textContent = "▣ CAPTURE DOCUMENT";
 
-                const width =
-                    parseFloat(bar.dataset.width || 0);
+    selfieSuccess.style.display = "block";
+    selfieSuccess.textContent = "Camera active for document scan";
+  }
 
-                setTimeout(function () {
+  function captureDocument() {
+    if (!camera.videoWidth || !camera.videoHeight) return;
 
-                    bar.style.width =
-                        Math.min(width, 100) + "%";
+    canvas.width = camera.videoWidth;
+    canvas.height = camera.videoHeight;
+    const ctx = canvas.getContext("2d");
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
 
-                }, 300);
+    canvas.toBlob(function (blob) {
+      if (!blob) return;
 
-            });
+      const file = new File([blob], "id_document_camera.jpg", { type: "image/jpeg" });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      idDocument.files = dataTransfer.files;
 
+      docName.textContent = "ID document captured successfully.";
+      documentCaptured = true;
 
-        /* TRUST SCORE COUNTER */
+      stopCamera();
 
-        const trust =
-            document.getElementById("trustScore");
+      camera.style.display = "none";
+      if (cameraWrapper) cameraWrapper.style.display = "none";
 
-        if (trust) {
+      capturedPhoto.src = URL.createObjectURL(blob);
+      capturedPhoto.style.display = "block";
 
-            const target =
-                parseFloat(trust.dataset.score || 0);
+      capturePhoto.style.display = "none";
+      shutterLabel.style.display = "none";
+      retakePhoto.style.display = "inline-flex";
 
-            let current = 0;
+      step3.classList.remove("active");
+      step3.classList.add("completed");
+      step4.classList.add("active");
 
-            const duration = 1200;
-            const start = performance.now();
+      verifySection.style.display = "block";
+    }, "image/jpeg", 0.90);
+  }
 
-            function animate(time) {
+  capturePhoto.addEventListener("click", function () {
+    if (!selfieCaptured) {
+      if (!faceDetected) {
+        alert("Please center your face inside the frame first.");
+        return;
+      }
 
-                const progress =
-                    Math.min((time - start) / duration, 1);
+      canvas.width = camera.videoWidth;
+      canvas.height = camera.videoHeight;
+      const ctx = canvas.getContext("2d");
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
 
-                const eased =
-                    1 - Math.pow(1 - progress, 3);
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
 
-                current = target * eased;
+        const file = new File([blob], "live_photo_camera.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        livePhoto.files = dataTransfer.files;
 
-                trust.textContent =
-                    current.toFixed(2) + "%";
+        capturedPhoto.src = URL.createObjectURL(blob);
+        capturedPhoto.style.display = "block";
 
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
+        selfieCaptured = true;
+        faceDetected = false;
 
-            }
+        step2.classList.remove("active");
+        step2.classList.add("completed");
+        step3.classList.add("active");
 
-            requestAnimationFrame(animate);
+        showDocumentCaptureMode();
+      }, "image/jpeg", 0.90);
 
-        }
+      return;
+    }
 
+    if (selfieCaptured && !documentCaptured) {
+      captureDocument();
+    }
+  });
+
+  // Manual File Upload Fallback
+  fallbackFileInput.addEventListener("change", function (e) {
+    if (!e.target.files.length) return;
+    const file = e.target.files[0];
+
+    if (!selfieCaptured) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      livePhoto.files = dataTransfer.files;
+
+      selfieCaptured = true;
+      step2.classList.remove("active");
+      step2.classList.add("completed");
+      step3.classList.add("active");
+
+      showDocumentCaptureMode();
+    } else if (!documentCaptured) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      idDocument.files = dataTransfer.files;
+
+      documentCaptured = true;
+      docName.textContent = "File selected: " + file.name;
+      stopCamera();
+
+      step3.classList.remove("active");
+      step3.classList.add("completed");
+      step4.classList.add("active");
+
+      verifySection.style.display = "block";
+    }
+  });
+
+  retakePhoto.addEventListener("click", async function () {
+    if (documentCaptured) {
+      documentCaptured = false;
+      idDocument.value = "";
+      docName.textContent = "";
+
+      verifySection.style.display = "none";
+
+      step4.classList.remove("active");
+      step3.classList.remove("completed");
+      step3.classList.add("active");
+
+      capturedPhoto.style.display = "none";
+      capturePhoto.style.display = "grid";
+      shutterLabel.style.display = "block";
+      retakePhoto.style.display = "none";
+
+      await startCameraFunction();
+      showDocumentCaptureMode();
+    }
+  });
+
+  function stopCamera() {
+    faceDetectionRunning = false;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      stream = null;
+      camera.srcObject = null;
+    }
+  }
+
+  // Multi-step animated verification sequence
+  verifyForm.addEventListener("submit", function (e) {
+    if (!livePhoto.files || !livePhoto.files.length) {
+      e.preventDefault();
+      alert("Please capture your selfie frame first.");
+      return;
+    }
+
+    if (!idDocument.files || !idDocument.files.length) {
+      e.preventDefault();
+      alert("Please capture your ID document.");
+      return;
+    }
+
+    typingData.value = JSON.stringify(keystrokes);
+    verifyButton.disabled = true;
+
+    loading.classList.add("active");
+
+    const loadingText = document.getElementById("loadingText");
+    const steps = [
+      "Collecting signals…",
+      "Analyzing biometrics…",
+      "Fusing evidence…",
+      "Generating trust score…"
+    ];
+
+    let stepIndex = 0;
+    setInterval(() => {
+      stepIndex = (stepIndex + 1) % steps.length;
+      if (loadingText) loadingText.textContent = steps[stepIndex];
+    }, 1200);
+  });
+
+  // Animated result meters & counters
+  document.querySelectorAll(".meter-fill").forEach(function (el) {
+    const w = el.getAttribute("data-width");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { el.style.width = w + "%"; });
     });
+  });
 
+  document.querySelectorAll("[data-target]").forEach(function (el) {
+    const target = parseFloat(el.getAttribute("data-target"));
+    if (isNaN(target)) return;
+
+    const duration = 900;
+    const start = performance.now();
+
+    function tick(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + "%";
+      if (p < 1) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  });
+
+  {% if result is mapping %}
+  window.addEventListener("load", function () {
+    const results = document.getElementById("results");
+    if (results) {
+      setTimeout(() => {
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  });
+  {% endif %}
+});
 </script>
-
 </body>
 </html>

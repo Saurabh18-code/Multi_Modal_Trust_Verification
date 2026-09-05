@@ -7,6 +7,7 @@ from modules.document_verification import DocumentVerifier
 from modules.fusion import TrustFusion
 from modules.behavioral_verification import BehavioralVerifier
 
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "data/uploads"
@@ -20,164 +21,341 @@ def home():
 
     if request.method == "POST":
 
+        # ========================================
+        # GET USER INPUT
+        # ========================================
+
         user_id = request.form.get("user_id")
+
         live_photo = request.files.get("live_photo")
         id_document = request.files.get("id_document")
 
-        if not live_photo or not id_document:
-            result = "Please upload both Live Photo and ID Document."
-            return render_template("index.html", result=result)
+        print("\n========================================")
+        print("🔥 VERIFICATION REQUEST RECEIVED")
+        print("========================================")
 
-        # Save uploaded files
+        print("USER ID:", user_id)
+        print("LIVE PHOTO:", live_photo)
+        print("ID DOCUMENT:", id_document)
+
+        # ========================================
+        # CHECK INPUTS
+        # ========================================
+
+        if not live_photo or not id_document:
+            print("❌ Missing selfie or ID document")
+
+            result = "Please capture Live Photo and ID Document."
+
+            return render_template(
+                "index.html",
+                result=result
+            )
+
+        # ========================================
+        # FILE PATHS
+        # ========================================
+
         live_path = os.path.join(
-            UPLOAD_FOLDER, "live_photo.jpg"
+            UPLOAD_FOLDER,
+            "live_photo.jpg"
         )
 
         id_path = os.path.join(
-            UPLOAD_FOLDER, "id_document.jpg"
+            UPLOAD_FOLDER,
+            "id_document.jpg"
         )
 
-        live_photo.save(live_path)
-        id_document.save(id_path)
+        # ========================================
+        # SAVE CAMERA SELFIE
+        # ========================================
 
-        print("\n========================================")
-        print("TRUSTNET AI VERIFICATION")
-        print("========================================")
-        print("User ID:", user_id)
+        try:
 
-        # -------------------------------
+            live_photo.save(live_path)
+
+            print("✓ Camera selfie saved:", live_path)
+
+        except Exception as e:
+
+            print("❌ Camera photo error:", e)
+
+            result = "Could not save camera selfie."
+
+            return render_template(
+                "index.html",
+                result=result
+            )
+
+        # ========================================
+        # SAVE ID DOCUMENT
+        # ========================================
+
+        try:
+
+            id_document.save(id_path)
+
+            print("✓ ID document saved:", id_path)
+
+        except Exception as e:
+
+            print("❌ ID document error:", e)
+
+            result = "Could not save ID document."
+
+            return render_template(
+                "index.html",
+                result=result
+            )
+
+        print("🔥 BOTH FILES SAVED — STARTING VERIFICATION")
+
+        # ========================================
         # MODULE 1: FACE VERIFICATION
-        # -------------------------------
+        # ========================================
 
-        face_verifier = FaceVerifier()
+        print("\nMODULE 1: FACE VERIFICATION")
+        print("🔥 STARTING FACE VERIFICATION")
 
-        face_score, face_mass, face_explanation = face_verifier.verify(
-            live_path,
-            id_path
-        )
+        try:
 
-        # -------------------------------
+            face_verifier = FaceVerifier()
+
+            face_score, face_mass, face_explanation = (
+                face_verifier.verify(
+                    live_path,
+                    id_path
+                )
+            )
+
+            print("✓ FACE VERIFICATION COMPLETE")
+            print("Face Score:", face_score)
+
+        except Exception as e:
+
+            print("❌ Face verification error:", e)
+
+            face_score = 0.0
+
+            face_mass = {
+                "real": 0.0,
+                "fake": 0.0,
+                "unknown": 1.0
+            }
+
+            face_explanation = (
+                "Face verification could not be completed."
+            )
+
+        # ========================================
         # MODULE 2: DOCUMENT VERIFICATION
-        # -------------------------------
+        # ========================================
 
-        document_verifier = DocumentVerifier()
+        print("\nMODULE 2: DOCUMENT VERIFICATION")
 
-        document_score, document_mass, document_explanation = (
-            document_verifier.verify(id_path)
-        )
+        try:
 
-        # -------------------------------
-        # MODULE 3: DEMPSTER-SHAFER FUSION
-        # -------------------------------
+            document_verifier = DocumentVerifier()
 
-      # -------------------------------
+            document_score, document_mass, document_explanation = (
+                document_verifier.verify(id_path)
+            )
+
+            print("✓ DOCUMENT VERIFICATION COMPLETE")
+            print("Document Score:", document_score)
+
+        except Exception as e:
+
+            print("❌ Document verification error:", e)
+
+            document_score = 0.0
+
+            document_mass = {
+                "real": 0.0,
+                "fake": 0.0,
+                "unknown": 1.0
+            }
+
+            document_explanation = (
+                "Document verification could not be completed."
+            )
+
+        # ========================================
         # MODULE 3: BEHAVIORAL VERIFICATION
-        # -------------------------------
+        # ========================================
+
+        print("\nMODULE 3: BEHAVIORAL VERIFICATION")
 
         behavioral_verifier = BehavioralVerifier()
 
-        # Get typing data from the HTML form
-        keystroke_data = request.form.get("keystroke_data", "")
+        typing_data = request.form.get(
+            "typing_data",
+            ""
+        )
 
-        if keystroke_data:
+        if typing_data:
+
             try:
-                keystroke_times = json.loads(keystroke_data)
 
-                behavioral_score, behavioral_mass, behavioral_explanation = (
-                    behavioral_verifier.verify(
-                        user_id,
-                        keystroke_times
-                    )
+                keystroke_times = json.loads(
+                    typing_data
                 )
 
             except Exception as e:
-                print("Behavioral verification error:", e)
 
-                behavioral_score = 0.5
-                behavioral_mass = {
-                    "real": 0.3,
-                    "fake": 0.3,
-                    "unknown": 0.4
-                }
-                behavioral_explanation = "Behavioral verification could not be completed."
+                print(
+                    "Typing data error:",
+                    e
+                )
+
+                keystroke_times = []
 
         else:
+
+            keystroke_times = []
+
+        try:
+
+            behavioral_score, behavioral_mass, behavioral_explanation = (
+                behavioral_verifier.verify(
+                    user_id,
+                    keystroke_times
+                )
+            )
+
+            print("✓ BEHAVIORAL VERIFICATION COMPLETE")
+            print("Behavioral Score:", behavioral_score)
+
+        except Exception as e:
+
+            print(
+                "❌ Behavioral verification error:",
+                e
+            )
+
             behavioral_score = 0.5
+
             behavioral_mass = {
                 "real": 0.3,
                 "fake": 0.3,
                 "unknown": 0.4
             }
-            behavioral_explanation = "No typing data received."
 
+            behavioral_explanation = (
+                "Behavioral verification could not be completed."
+            )
 
-        # -------------------------------
+        # ========================================
         # MODULE 4: DEMPSTER-SHAFER FUSION
-        # -------------------------------
+        # ========================================
 
-        fusion = TrustFusion()
-        behavioral_verifier = BehavioralVerifier()
+        print("\nMODULE 4: DEMPSTER-SHAFER FUSION")
 
-        # Get typing data from the HTML form
-        typing_data = request.form.get("typing_data")
+        try:
 
-        # Convert typing data into Python list
-        import json
+            fusion = TrustFusion()
 
-        if typing_data:
-            try:
-                keystroke_times = json.loads(typing_data)
-            except:
-                keystroke_times = []
-        else:
-            keystroke_times = []
+            fusion_result = fusion.combine(
+                face_mass,
+                document_mass,
+                behavioral_mass
+            )
 
-        # Module 3: Behavioral Verification
-        behavioral_score, behavioral_mass, behavioral_explanation = behavioral_verifier.verify(
-            user_id,
-            keystroke_times
-        )
+            print("✓ FUSION COMPLETE")
 
-        # Combine all 3 verification modules
-        fusion_result = fusion.combine(
-            face_mass,
-            document_mass,
-            behavioral_mass
-        )
-        # -------------------------------
-        # DISPLAY RESULTS
-        # -------------------------------
+            print(
+                "Trust Score:",
+                fusion_result["trust_score"]
+            )
+
+            print(
+                "Decision:",
+                fusion_result["decision"]
+            )
+
+        except Exception as e:
+
+            print("❌ Fusion error:", e)
+
+            fusion_result = {
+                "trust_score": 0.0,
+                "decision": "VERIFICATION ERROR"
+            }
+
+        # ========================================
+        # FINAL RESULT
+        # ========================================
 
         result = {
-    "face_score": round(face_score * 100, 2),
-    "face_explanation": face_explanation,
 
-    "document_score": round(document_score * 100, 2),
-    "document_explanation": document_explanation,
+            "face_score": round(
+                face_score * 100,
+                2
+            ),
 
-    "behavioral_score": round(behavioral_score * 100, 2),
-    "behavioral_explanation": behavioral_explanation,
+            "face_explanation":
+                face_explanation,
 
-    "trust_score": round(
-        fusion_result["trust_score"] * 100, 2
-    ),
+            "document_score": round(
+                document_score * 100,
+                2
+            ),
 
-    "decision": fusion_result["decision"]
-}
+            "document_explanation":
+                document_explanation,
 
-        # -------------------------------
+            "behavioral_score": round(
+                behavioral_score * 100,
+                2
+            ),
+
+            "behavioral_explanation":
+                behavioral_explanation,
+
+            "trust_score": round(
+                fusion_result["trust_score"] * 100,
+                2
+            ),
+
+            "decision":
+                fusion_result["decision"]
+        }
+
+        # ========================================
         # PRINT FINAL RESULTS
-        # -------------------------------
+        # ========================================
 
         print("\n========================================")
-        print("FINAL MODULE RESULTS")
+        print("🔥 FINAL MODULE RESULTS")
         print("========================================")
 
-        print("Face Score:", face_score)
-        print("Document Score:", document_score)
-        print("Behavioral Score:", behavioral_score)
-        print("Trust Score:", fusion_result["trust_score"])
-        print("Decision:", fusion_result["decision"])
+        print(
+            "Face Score:",
+            face_score
+        )
+
+        print(
+            "Document Score:",
+            document_score
+        )
+
+        print(
+            "Behavioral Score:",
+            behavioral_score
+        )
+
+        print(
+            "Trust Score:",
+            fusion_result["trust_score"]
+        )
+
+        print(
+            "Decision:",
+            fusion_result["decision"]
+        )
+
+        print("========================================\n")
+
     return render_template(
         "index.html",
         result=result
@@ -185,4 +363,5 @@ def home():
 
 
 if __name__ == "__main__":
+
     app.run(debug=True)
