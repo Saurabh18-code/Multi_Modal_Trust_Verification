@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, send_file
 import os
 import json
 
 from modules.face_verification import FaceVerifier
 from modules.document_verification import DocumentVerifier
-from modules.fusion import TrustFusion
+from modules.dempster_shafer import DempsterShaferFusion
 from modules.behavioral_verification import BehavioralVerifier
-
+from modules.pdf_generator import generate_pdf_report
+import config
 
 app = Flask(__name__)
+app.secret_key = config.SECRET_KEY
 
 UPLOAD_FOLDER = "data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -16,352 +18,125 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-
     result = None
 
     if request.method == "POST":
-
-        # ========================================
-        # GET USER INPUT
-        # ========================================
-
-        user_id = request.form.get("user_id")
-
+        user_id = request.form.get("user_id", "Unknown User")
         live_photo = request.files.get("live_photo")
         id_document = request.files.get("id_document")
 
-        print("\n========================================")
-        print("🔥 VERIFICATION REQUEST RECEIVED")
-        print("========================================")
-
-        print("USER ID:", user_id)
-        print("LIVE PHOTO:", live_photo)
-        print("ID DOCUMENT:", id_document)
-
-        # ========================================
-        # CHECK INPUTS
-        # ========================================
-
         if not live_photo or not id_document:
-            print("❌ Missing selfie or ID document")
-
             result = "Please capture Live Photo and ID Document."
+            return render_template("index.html", result=result)
 
-            return render_template(
-                "index.html",
-                result=result
-            )
-
-        # ========================================
-        # FILE PATHS
-        # ========================================
-
-        live_path = os.path.join(
-            UPLOAD_FOLDER,
-            "live_photo.jpg"
-        )
-
-        id_path = os.path.join(
-            UPLOAD_FOLDER,
-            "id_document.jpg"
-        )
-
-        # ========================================
-        # SAVE CAMERA SELFIE
-        # ========================================
+        live_path = os.path.join(UPLOAD_FOLDER, "live_photo.jpg")
+        id_path = os.path.join(UPLOAD_FOLDER, "id_document.jpg")
 
         try:
-
             live_photo.save(live_path)
-
-            print("✓ Camera selfie saved:", live_path)
-
-        except Exception as e:
-
-            print("❌ Camera photo error:", e)
-
-            result = "Could not save camera selfie."
-
-            return render_template(
-                "index.html",
-                result=result
-            )
-
-        # ========================================
-        # SAVE ID DOCUMENT
-        # ========================================
-
-        try:
-
             id_document.save(id_path)
-
-            print("✓ ID document saved:", id_path)
-
         except Exception as e:
+            result = "Could not save uploaded files."
+            return render_template("index.html", result=result)
 
-            print("❌ ID document error:", e)
-
-            result = "Could not save ID document."
-
-            return render_template(
-                "index.html",
-                result=result
-            )
-
-        print("🔥 BOTH FILES SAVED — STARTING VERIFICATION")
-
-        # ========================================
-        # MODULE 1: FACE VERIFICATION
-        # ========================================
-
-        print("\nMODULE 1: FACE VERIFICATION")
-        print("🔥 STARTING FACE VERIFICATION")
-
+        # 1. Face Verification
         try:
-
             face_verifier = FaceVerifier()
-
-            face_score, face_mass, face_explanation = (
-                face_verifier.verify(
-                    live_path,
-                    id_path
-                )
-            )
-
-            print("✓ FACE VERIFICATION COMPLETE")
-            print("Face Score:", face_score)
-
+            face_score, face_mass, face_explanation = face_verifier.verify(live_path, id_path)
         except Exception as e:
+            face_score, face_mass = 0.0, {"real": 0.0, "fake": 0.0, "unknown": 1.0}
+            face_explanation = "Face verification failed due to processing error."
 
-            print("❌ Face verification error:", e)
-
-            face_score = 0.0
-
-            face_mass = {
-                "real": 0.0,
-                "fake": 0.0,
-                "unknown": 1.0
-            }
-
-            face_explanation = (
-                "Face verification could not be completed."
-            )
-
-        # ========================================
-        # MODULE 2: DOCUMENT VERIFICATION
-        # ========================================
-
-        print("\nMODULE 2: DOCUMENT VERIFICATION")
-
+        # 2. Document Verification
         try:
-
             document_verifier = DocumentVerifier()
-
-            document_score, document_mass, document_explanation = (
-                document_verifier.verify(id_path)
-            )
-
-            print("✓ DOCUMENT VERIFICATION COMPLETE")
-            print("Document Score:", document_score)
-
+            doc_score, doc_mass, doc_explanation = document_verifier.verify(id_path)
         except Exception as e:
+            doc_score, doc_mass = 0.0, {"real": 0.0, "fake": 0.0, "unknown": 1.0}
+            doc_explanation = "Document verification failed due to processing error."
 
-            print("❌ Document verification error:", e)
-
-            document_score = 0.0
-
-            document_mass = {
-                "real": 0.0,
-                "fake": 0.0,
-                "unknown": 1.0
-            }
-
-            document_explanation = (
-                "Document verification could not be completed."
-            )
-
-        # ========================================
-        # MODULE 3: BEHAVIORAL VERIFICATION
-        # ========================================
-
-        print("\nMODULE 3: BEHAVIORAL VERIFICATION")
-
+        # 3. Behavioral Verification
         behavioral_verifier = BehavioralVerifier()
+        typing_raw = request.form.get("typing_data", "")
 
-        typing_data = request.form.get(
-            "typing_data",
-            ""
-        )
+        keystrokes = []
+        is_pasted = False
+        pointer_velocity = []
 
-        if typing_data:
-
+        if typing_raw:
             try:
-
-                keystroke_times = json.loads(
-                    typing_data
-                )
-
+                parsed_data = json.loads(typing_raw)
+                if isinstance(parsed_data, dict):
+                    keystrokes = parsed_data.get("keystrokes", [])
+                    is_pasted = parsed_data.get("isPasted", False)
+                    pointer_velocity = parsed_data.get("pointerVelocity", [])
+                elif isinstance(parsed_data, list):
+                    keystrokes = parsed_data
             except Exception as e:
-
-                print(
-                    "Typing data error:",
-                    e
-                )
-
-                keystroke_times = []
-
-        else:
-
-            keystroke_times = []
+                pass
 
         try:
-
-            behavioral_score, behavioral_mass, behavioral_explanation = (
-                behavioral_verifier.verify(
-                    user_id,
-                    keystroke_times
-                )
+            beh_score, beh_mass, beh_explanation = behavioral_verifier.verify(
+                user_id, keystrokes, is_pasted=is_pasted, pointer_velocity=pointer_velocity
             )
-
-            print("✓ BEHAVIORAL VERIFICATION COMPLETE")
-            print("Behavioral Score:", behavioral_score)
-
         except Exception as e:
+            beh_score, beh_mass = 0.5, {"real": 0.3, "fake": 0.3, "unknown": 0.4}
+            beh_explanation = "Behavioral verification could not be completed."
 
-            print(
-                "❌ Behavioral verification error:",
-                e
-            )
-
-            behavioral_score = 0.5
-
-            behavioral_mass = {
-                "real": 0.3,
-                "fake": 0.3,
-                "unknown": 0.4
-            }
-
-            behavioral_explanation = (
-                "Behavioral verification could not be completed."
-            )
-
-        # ========================================
-        # MODULE 4: DEMPSTER-SHAFER FUSION
-        # ========================================
-
-        print("\nMODULE 4: DEMPSTER-SHAFER FUSION")
-
+        # 4. Dempster-Shafer Fusion
         try:
-
-            fusion = TrustFusion()
-
-            fusion_result = fusion.combine(
-                face_mass,
-                document_mass,
-                behavioral_mass
+            fusion = DempsterShaferFusion()
+            fusion_result = fusion.fuse(
+                (face_score, face_mass, face_explanation),
+                (doc_score, doc_mass, doc_explanation),
+                (beh_score, beh_mass, beh_explanation)
             )
-
-            print("✓ FUSION COMPLETE")
-
-            print(
-                "Trust Score:",
-                fusion_result["trust_score"]
-            )
-
-            print(
-                "Decision:",
-                fusion_result["decision"]
-            )
-
         except Exception as e:
-
-            print("❌ Fusion error:", e)
-
             fusion_result = {
-                "trust_score": 0.0,
-                "decision": "VERIFICATION ERROR"
+                "trust_percent": 0.0,
+                "decision": "VERIFICATION ERROR",
+                "explanation": "Fusion computation failed."
             }
-
-        # ========================================
-        # FINAL RESULT
-        # ========================================
 
         result = {
-
-            "face_score": round(
-                face_score * 100,
-                2
-            ),
-
-            "face_explanation":
-                face_explanation,
-
-            "document_score": round(
-                document_score * 100,
-                2
-            ),
-
-            "document_explanation":
-                document_explanation,
-
-            "behavioral_score": round(
-                behavioral_score * 100,
-                2
-            ),
-
-            "behavioral_explanation":
-                behavioral_explanation,
-
-            "trust_score": round(
-                fusion_result["trust_score"] * 100,
-                2
-            ),
-
-            "decision":
-                fusion_result["decision"]
+            "face_score": round(face_score * 100, 2),
+            "face_explanation": face_explanation,
+            "document_score": round(doc_score * 100, 2),
+            "document_explanation": doc_explanation,
+            "behavioral_score": round(beh_score * 100, 2),
+            "behavioral_explanation": beh_explanation,
+            "trust_score": fusion_result["trust_percent"],
+            "decision": fusion_result["decision"]
         }
 
-        # ========================================
-        # PRINT FINAL RESULTS
-        # ========================================
+        # Store in session for PDF generation
+        session["latest_result"] = result
+        session["latest_user_id"] = user_id
 
-        print("\n========================================")
-        print("🔥 FINAL MODULE RESULTS")
-        print("========================================")
+    return render_template("index.html", result=result)
 
-        print(
-            "Face Score:",
-            face_score
-        )
 
-        print(
-            "Document Score:",
-            document_score
-        )
+@app.route("/download_report")
+def download_report():
+    result = session.get("latest_result")
+    user_id = session.get("latest_user_id", "Unknown")
 
-        print(
-            "Behavioral Score:",
-            behavioral_score
-        )
+    if not result:
+        return "No active verification report found. Please complete verification first.", 400
 
-        print(
-            "Trust Score:",
-            fusion_result["trust_score"]
-        )
-
-        print(
-            "Decision:",
-            fusion_result["decision"]
-        )
-
-        print("========================================\n")
-
-    return render_template(
-        "index.html",
-        result=result
+    pdf_buffer = generate_pdf_report(result, user_id=user_id)
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=f"TrustNet_Report_{user_id}.pdf",
+        mimetype="application/pdf"
     )
 
 
-if __name__ == "__main__":
+@app.route("/admin")
+def admin():
+    return render_template("admin.html") if os.path.exists("templates/admin.html") else "Admin Dashboard"
 
-    app.run(debug=True)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)

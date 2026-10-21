@@ -151,7 +151,7 @@ button {
   box-shadow: 0 0 0 4px rgba(22, 164, 111, 0.15);
 }
 
-/* HERO SECTION (2-COLUMN FLEX) */
+/* HERO SECTION */
 .hero {
   padding: 32px 0 24px;
   display: flex;
@@ -223,7 +223,6 @@ button {
   display: block;
 }
 
-/* SVG Palette & Animation Styles */
 .flow-line-back {
   stroke: #cbd5e1;
   stroke-width: 1.8;
@@ -546,7 +545,6 @@ button {
   display: block;
 }
 
-/* Viewfinder Corner Overlay */
 .viewfinder {
   position: absolute;
   inset: 20px;
@@ -565,7 +563,6 @@ button {
 .viewfinder span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
 .viewfinder span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-bottom: 0; border-radius: 0 0 6px 0; }
 
-/* Guides */
 .face-guide {
   position: absolute;
   inset: 0;
@@ -639,7 +636,6 @@ button {
   display: block;
 }
 
-/* CIRCULAR CAPTURE BUTTON */
 .camera-controls {
   display: flex;
   flex-direction: column;
@@ -840,7 +836,6 @@ button {
   margin-top: 2px;
 }
 
-/* Hero Trust Card */
 .hero-trust-card {
   background: var(--ink);
   color: #ffffff;
@@ -942,7 +937,6 @@ button {
   border-color: rgba(255, 142, 142, 0.22);
 }
 
-/* Individual Signals Grid */
 .result-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1005,6 +999,12 @@ button {
   margin-top: 12px;
 }
 
+.print-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
 footer {
   margin-top: 55px;
   padding-top: 20px;
@@ -1013,99 +1013,55 @@ footer {
   color: #98a2b3;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 15px;
+}
+
+.admin-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.admin-link:hover {
+  color: var(--blue);
 }
 
 /* RESPONSIVE & MOBILE DESIGN */
 @media (max-width: 850px) {
-  .hero {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .compact-motion-wrap {
-    width: 100%;
-    max-width: 350px;
-    justify-content: flex-start;
-  }
-
-  .result-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .trust-hero-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .hero { flex-direction: column; align-items: flex-start; }
+  .compact-motion-wrap { width: 100%; max-width: 350px; justify-content: flex-start; }
+  .result-grid { grid-template-columns: 1fr; }
+  .trust-hero-content { flex-direction: column; align-items: flex-start; }
 }
 
 @media (max-width: 480px) {
-  .compact-motion-wrap {
-    width: 100%;
-    max-width: 100%;
-    justify-content: center;
-    margin: 10px auto 20px;
-  }
+  .compact-motion-wrap { width: 100%; max-width: 100%; justify-content: center; margin: 10px auto 20px; }
 }
 
 @media (max-width: 620px) {
-  .page {
-    width: calc(100% - 24px);
-  }
-
-  .navbar {
-    height: 70px;
-  }
-
-  .status-readout {
-    display: none;
-  }
-
-  .verification-box {
-    padding: 20px;
-    border-radius: 18px;
-  }
-
-  .section-head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .step-sequence {
-    display: flex;
-    justify-content: space-between;
-    gap: 4px;
-  }
-
-  .step {
-    padding: 8px;
-    justify-content: center;
-    flex: 1;
-  }
-
-  .step-name {
-    display: none;
-  }
-
-  footer {
-    flex-direction: column;
-  }
+  .page { width: calc(100% - 24px); }
+  .navbar { height: 70px; }
+  .status-readout { display: none; }
+  .verification-box { padding: 20px; border-radius: 18px; }
+  .section-head { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .step-sequence { display: flex; justify-content: space-between; gap: 4px; }
+  .step { padding: 8px; justify-content: center; flex: 1; }
+  .step-name { display: none; }
+  footer { flex-direction: column; align-items: flex-start; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-a:focus-visible, button:focus-visible, input:focus-visible {
-  outline: 3px solid #9db0ff;
-  outline-offset: 3px;
+@media print {
+  body { background: #fff; }
+  .hero, .navbar, .step-sequence, .verification-box, .print-actions, footer { display: none; }
+  .analysis { margin-top: 0; }
+  .hero-trust-card { box-shadow: none; border: 1px solid #e3e7ef; color: #000; background: #fff; }
+  .ring::after { background: #fff; }
+  .trust-hero-label, .trust-hero-title, .result-label, .result-description, .score { color: #000; }
 }
 </style>
 </head>
@@ -1115,7 +1071,6 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="brand">
-      <!-- ACCURATE SHIELD LOGO (TRANSPARENT BACKGROUND, SHIELD + 3-SECTOR BIOMETRIC DESIGN) -->
       <svg class="brand-logo-icon" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="shieldFrame" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1134,17 +1089,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
             <stop offset="100%" stop-color="#06b6d4"/>
           </linearGradient>
         </defs>
-
-        <!-- Outer Silver Metallic Shield Bezel -->
         <path d="M100 8 L185 42 V118 C185 170 146 204 100 218 C54 204 15 170 15 118 V42 Z" fill="url(#shieldFrame)"/>
-        
-        <!-- Inner Deep Blue Metallic Shield Base -->
         <path d="M100 20 L173 50 V114 C173 159 139 190 100 202 C61 190 27 159 27 114 V50 Z" fill="url(#shieldInnerBlue)"/>
-
-        <!-- Y-Split Divider Lines forming 3 Sectors (Network Top, Fingerprint Left, Eye Right) -->
         <path d="M100 100 L100 22 M100 100 L32 135 M100 100 L168 135" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
-
-        <!-- TOP SECTOR: Neural Network & Connected Nodes -->
         <g stroke="url(#cyanGlow)" stroke-width="2" fill="none">
           <path d="M100 35 L75 55 M100 35 L125 55 M100 35 L100 65 M75 55 L55 45 M125 55 L145 45 M75 55 L85 75 M125 55 L115 75"/>
           <circle cx="100" cy="35" r="4" fill="#ffffff"/>
@@ -1155,23 +1102,16 @@ a:focus-visible, button:focus-visible, input:focus-visible {
           <circle cx="85" cy="75" r="3" fill="#38bdf8"/>
           <circle cx="115" cy="75" r="3" fill="#38bdf8"/>
         </g>
-
-        <!-- BOTTOM-LEFT SECTOR: Biometric Fingerprint Arcs -->
         <g stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.85">
           <path d="M42 120 C48 102 68 98 80 110"/>
           <path d="M46 132 C54 112 76 108 86 122"/>
           <path d="M52 145 C60 124 82 120 90 138"/>
           <path d="M60 158 C68 138 88 136 94 152"/>
         </g>
-
-        <!-- BOTTOM-RIGHT SECTOR: Cybernetic Eye & Circuit Lines -->
         <g stroke="#38bdf8" stroke-width="2" fill="none">
-          <!-- Eye Outline -->
           <path d="M112 135 C125 118 152 118 162 135 C152 150 125 150 112 135 Z" stroke="#38bdf8" stroke-width="2.2"/>
-          <!-- Iris & Pupil -->
           <circle cx="137" cy="134" r="8" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
           <circle cx="137" cy="134" r="3.5" fill="#ffffff"/>
-          <!-- Circuit Lines Below Eye -->
           <path d="M120 152 V168 L130 178 M145 152 V175 M160 148 V162 L152 172" stroke-width="1.8" opacity="0.8"/>
           <circle cx="130" cy="178" r="2" fill="#38bdf8"/>
           <circle cx="145" cy="175" r="2" fill="#38bdf8"/>
@@ -1188,7 +1128,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     </div>
   </nav>
 
-  <!-- HERO SECTION WITH COMPACT MOTION DIAGRAM ON THE RIGHT -->
+  <!-- HERO SECTION -->
   <section class="hero">
     <div class="hero-main">
       <h1>Verify identity. <span>Build trust.</span></h1>
@@ -1198,44 +1138,23 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         <div class="badge-pill"><span class="badge-pill-dot"></span> Behavior Signal</div>
       </div>
     </div>
-
-    <!-- COMPACT MOTION DIAGRAM -->
     <div class="compact-motion-wrap">
       <svg class="motion-diagram-svg" viewBox="0 0 380 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Base Curved Connecting Lines -->
         <path d="M 48 22 C 150 22, 180 64, 260 64" class="flow-line-back"/>
         <path d="M 48 62 L 260 64" class="flow-line-back"/>
         <path d="M 48 102 C 150 102, 180 64, 260 64" class="flow-line-back"/>
-
-        <!-- Pulsing Lines -->
         <path d="M 48 22 C 150 22, 180 64, 260 64" class="flow-line-pulse"/>
         <path d="M 48 62 L 260 64" class="flow-line-pulse"/>
         <path d="M 48 102 C 150 102, 180 64, 260 64" class="flow-line-pulse"/>
-
-        <!-- Fast Motion Particles -->
-        <circle r="3" fill="#315efb">
-          <animateMotion dur="1.2s" repeatCount="indefinite" path="M 48 22 C 150 22, 180 64, 260 64"/>
-        </circle>
-        <circle r="3" fill="#315efb">
-          <animateMotion dur="1.0s" repeatCount="indefinite" path="M 48 62 L 260 64"/>
-        </circle>
-        <circle r="3" fill="#315efb">
-          <animateMotion dur="1.4s" repeatCount="indefinite" path="M 48 102 C 150 102, 180 64, 260 64"/>
-        </circle>
-
-        <!-- Face Node -->
+        <circle r="3" fill="#315efb"><animateMotion dur="1.2s" repeatCount="indefinite" path="M 48 22 C 150 22, 180 64, 260 64"/></circle>
+        <circle r="3" fill="#315efb"><animateMotion dur="1.0s" repeatCount="indefinite" path="M 48 62 L 260 64"/></circle>
+        <circle r="3" fill="#315efb"><animateMotion dur="1.4s" repeatCount="indefinite" path="M 48 102 C 150 102, 180 64, 260 64"/></circle>
         <circle cx="36" cy="22" r="12" class="node-circle"/>
         <text x="36" y="44" text-anchor="middle" class="node-text">FACE</text>
-
-        <!-- Document Node -->
         <circle cx="36" cy="62" r="12" class="node-circle"/>
         <text x="36" y="84" text-anchor="middle" class="node-text">DOCUMENT</text>
-
-        <!-- Behavior Node -->
         <circle cx="36" cy="102" r="12" class="node-circle"/>
         <text x="36" y="124" text-anchor="middle" class="node-text">BEHAVIOR</text>
-
-        <!-- Target Box: TRUST SCORE (Harmonized Blue Theme) -->
         <rect x="260" y="42" width="104" height="44" class="target-box"/>
         <text x="312" y="61" text-anchor="middle" class="target-text">TRUST</text>
         <text x="312" y="74" text-anchor="middle" class="target-text">SCORE</text>
@@ -1243,7 +1162,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     </div>
   </section>
 
-  <!-- MAIN VERIFICATION CONTAINER -->
+  <!-- VERIFICATION CONTAINER -->
   <section class="verification-box" id="verify">
     <div class="section-head">
       <div>
@@ -1274,9 +1193,8 @@ a:focus-visible, button:focus-visible, input:focus-visible {
       </div>
     </div>
 
-    <!-- VERIFICATION FORM -->
-    <form method="POST" enctype="multipart/form-data" id="verifyForm">
-      <!-- STEP 1: IDENTITY INPUT -->
+    <form action="/" method="POST" enctype="multipart/form-data" id="verifyForm">
+      <!-- STEP 1 -->
       <div class="field" id="userSection">
         <label class="field-label" for="userId">Full Name, Student ID, or Username</label>
         <div class="input-shell">
@@ -1284,13 +1202,13 @@ a:focus-visible, button:focus-visible, input:focus-visible {
             <circle cx="12" cy="8" r="4"/>
             <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
           </svg>
-          <input class="input" type="text" name="user_id" id="userId" placeholder="e.g., user-id or name" required autocomplete="off">
+          <input class="input" type="text" name="user_id" id="userId" placeholder="e.g., ID-2026-001" required autocomplete="off">
         </div>
         <input type="hidden" name="typing_data" id="typingData">
         <button type="button" class="btn btn-primary" id="continueBtn" style="margin-top:16px">Continue to Facial Scan →</button>
       </div>
 
-      <!-- STEP 2 & 3: CAMERA CAPTURE -->
+      <!-- STEP 2 & 3 -->
       <div id="cameraSection" style="display:none">
         <div class="camera-card">
           <div class="camera-header-row">
@@ -1323,8 +1241,6 @@ a:focus-visible, button:focus-visible, input:focus-visible {
             <button type="button" class="shutter-btn" id="capturePhoto" disabled aria-label="Capture"></button>
             <div class="shutter-label" id="shutterLabel">◉ CAPTURE SELFIE</div>
             <button type="button" class="btn btn-outline" id="retakePhoto" style="display:none">↻ Retake Frame</button>
-
-            <!-- Camera Permission Fallback -->
             <div class="fallback-box" id="fallbackBox">
               Camera trouble? <label class="fallback-btn" for="fallbackFileInput">Upload file manually</label>
               <input type="file" id="fallbackFileInput" accept="image/*" style="display:none">
@@ -1342,16 +1258,14 @@ a:focus-visible, button:focus-visible, input:focus-visible {
           </div>
         </div>
 
-        <!-- STEP 4: VERIFY BUTTON -->
+        <!-- STEP 4 -->
         <div id="verifySection">
           <button class="btn btn-primary" type="submit" id="verifyButton">Verify Identity →</button>
-          
           <div class="privacy-indicators">
             <div class="privacy-item">🔒 Secure processing</div>
             <div class="privacy-item">✓ Multi-signal verification</div>
             <div class="privacy-item">✓ Encrypted transit</div>
           </div>
-
           <div class="loading" id="loading" aria-live="polite">
             <div class="loader"></div>
             <div id="loadingText">Collecting signals…</div>
@@ -1430,15 +1344,37 @@ a:focus-visible, button:focus-visible, input:focus-visible {
         <div class="result-description">{{ result.behavioral_explanation }}</div>
       </div>
     </div>
+    
+    <!-- PDF EXPORT BUTTON -->
+    <div class="print-actions">
+      <a href="/download_report" class="btn btn-outline" style="text-decoration: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        Download Official PDF Certificate
+      </a>
+    </div>
   </section>
   {% endif %}
 
   <footer>
-    <div>TrustNet AI · Digital Identity Verification</div>
-    <div>Computer Engineering Project · 2025–2026</div>
+    <div>
+      TrustNet AI · Digital Identity Verification<br>
+      Computer Engineering Project · 2025–2026
+    </div>
+    
+    <!-- ADMIN DASHBOARD LINK -->
+    <a href="/admin" class="admin-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="9" y1="3" x2="9" y2="21"></line>
+      </svg>
+      Admin Console
+    </a>
   </footer>
 </div>
 
+<!-- MEDIAPIPE & APPLICATION SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -1483,13 +1419,24 @@ document.addEventListener("DOMContentLoaded", function () {
   let faceDetected = false;
   let faceDetectionRunning = false;
 
-  // BEHAVIORAL TRACKING
+  // 1. BEHAVIORAL TRACKING: KEYSTROKES & PASTE ANOMALY
   let keyDownTimes = {};
   let keystrokes = [];
+  let isPasted = false;
+
+  userId.addEventListener("paste", function (event) {
+    isPasted = true;
+    keystrokes.push(["PASTE_EVENT", performance.now(), performance.now()]);
+    updateBehavioralPayload();
+  });
 
   userId.addEventListener("keydown", function (event) {
     if (event.repeat) return;
     keyDownTimes[event.key] = performance.now();
+    if (event.key === "Enter") {
+      event.preventDefault();
+      continueBtn.click();
+    }
   });
 
   userId.addEventListener("keyup", function (event) {
@@ -1498,18 +1445,65 @@ document.addEventListener("DOMContentLoaded", function () {
       const releaseTime = performance.now();
       keystrokes.push([event.key, pressTime, releaseTime]);
       delete keyDownTimes[event.key];
-      typingData.value = JSON.stringify(keystrokes);
+      updateBehavioralPayload();
     }
   });
 
-  userId.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      continueBtn.click();
-    }
-  });
+  // 2. BEHAVIORAL TRACKING: MOUSE & TOUCH VELOCITY
+  let pointerLogs = [];
+  let lastPointer = null;
 
-  // MEDIAPIPE FACE DETECTION WITH TRY...CATCH FALLBACK
+  function trackPointerVelocity(e) {
+    if (pointerLogs.length > 80) return; // Prevent heavy memory payload
+    
+    const now = performance.now();
+    const x = e.clientX || (e.touches && e.touches.length > 0 ? e.touches[0].clientX : 0);
+    const y = e.clientY || (e.touches && e.touches.length > 0 ? e.touches[0].clientY : 0);
+
+    if (lastPointer) {
+      const dt = now - lastPointer.time;
+      const dx = x - lastPointer.x;
+      const dy = y - lastPointer.y;
+      
+      if (dt > 10) {
+        const velocity = Math.sqrt(dx * dx + dy * dy) / dt;
+        pointerLogs.push({ v: parseFloat(velocity.toFixed(2)), t: Math.round(now) });
+        lastPointer = { x, y, time: now };
+        updateBehavioralPayload();
+      }
+    } else {
+      lastPointer = { x, y, time: now };
+    }
+  }
+
+  document.addEventListener("mousemove", trackPointerVelocity, { passive: true });
+  document.addEventListener("touchmove", trackPointerVelocity, { passive: true });
+
+  function updateBehavioralPayload() {
+    typingData.value = JSON.stringify({ 
+      isPasted: isPasted, 
+      keystrokes: keystrokes,
+      pointerVelocity: pointerLogs 
+    });
+  }
+
+  // 3. LIVENESS STATE ENGINE
+  const LIVENESS_CHALLENGES = ["TURN_LEFT", "TURN_RIGHT"];
+  let currentChallenge = null;
+  let challengePassed = false;
+
+  function assignLivenessChallenge() {
+    currentChallenge = LIVENESS_CHALLENGES[Math.floor(Math.random() * LIVENESS_CHALLENGES.length)];
+    challengePassed = false;
+    
+    if (faceStatus) {
+      const actionText = currentChallenge === "TURN_LEFT" ? "Turn head slightly left ⬅️" : "Turn head slightly right ➡️";
+      faceStatus.textContent = `Liveness Check: ${actionText}`;
+      faceStatus.style.background = "rgba(49, 94, 251, 0.90)";
+    }
+  }
+
+  // 4. MEDIAPIPE FACE DETECTION WITH LIVENESS EVALUATION
   let faceDetection = null;
 
   try {
@@ -1520,7 +1514,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       faceDetection.setOptions({
         model: "short",
-        minDetectionConfidence: 0.6
+        minDetectionConfidence: 0.65
       });
 
       faceDetection.onResults(function (results) {
@@ -1528,27 +1522,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (results.detections && results.detections.length === 1) {
           const box = results.detections[0].boundingBox;
-          const insideGuide = box.xCenter > 0.30 && box.xCenter < 0.70 && box.yCenter > 0.25 && box.yCenter < 0.75;
+          
+          // Position Check
+          const isCentered = box.xCenter > 0.30 && box.xCenter < 0.70 && box.yCenter > 0.25 && box.yCenter < 0.75;
 
-          if (insideGuide) {
-            faceDetected = true;
-            if (faceStatus) {
-              faceStatus.textContent = "● Face detected — Perfect, ready to capture";
-              faceStatus.style.background = "rgba(22, 164, 111, 0.92)";
-            }
-            capturePhoto.disabled = false;
-          } else {
+          if (!isCentered) {
             faceDetected = false;
-            if (faceStatus) {
-              faceStatus.textContent = "Center your face";
+            if (faceStatus && !challengePassed) {
+              faceStatus.textContent = "Center your face in the oval";
               faceStatus.style.background = "rgba(217, 138, 25, 0.92)";
             }
             capturePhoto.disabled = true;
+            return;
+          }
+
+          // Active Gesture Evaluation
+          if (!challengePassed) {
+            const offset = box.xCenter - 0.5; // Evaluates horizontal head shift
+            if (currentChallenge === "TURN_LEFT" && offset < -0.05) {
+              challengePassed = true;
+            } else if (currentChallenge === "TURN_RIGHT" && offset > 0.05) {
+              challengePassed = true;
+            }
+          }
+
+          // Status Update & Shutter Activation
+          if (challengePassed) {
+            faceDetected = true;
+            if (faceStatus) {
+              faceStatus.textContent = "● Liveness Verified — Click to capture";
+              faceStatus.style.background = "rgba(22, 164, 111, 0.92)";
+            }
+            capturePhoto.disabled = false;
           }
         } else {
           faceDetected = false;
           if (faceStatus) {
-            faceStatus.textContent = results.detections && results.detections.length > 1 ? "Only one face should be visible" : "Looking for face…";
+            faceStatus.textContent = results.detections && results.detections.length > 1 
+              ? "Only one person should be visible" 
+              : "Looking for face…";
             faceStatus.style.background = "rgba(220, 76, 76, 0.85)";
           }
           capturePhoto.disabled = true;
@@ -1556,7 +1568,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   } catch (err) {
-    console.warn("MediaPipe Face Detection failed to initialize:", err);
+    console.warn("MediaPipe initialization fallback:", err);
     capturePhoto.disabled = false;
     faceDetected = true;
   }
@@ -1589,6 +1601,7 @@ document.addEventListener("DOMContentLoaded", function () {
     processFrame();
   }
 
+  // CONTINUE TO FACIAL SCAN WITH AUTO-SCROLL
   continueBtn.addEventListener("click", async function () {
     if (userId.value.trim() === "") {
       alert("Please enter your name or user ID.");
@@ -1602,6 +1615,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     continueBtn.style.display = "none";
     cameraSection.style.display = "block";
+
+    // Smoothly scroll down and center the camera section automatically
+    cameraSection.scrollIntoView({ behavior: "smooth", block: "center" });
 
     await startCameraFunction();
   });
@@ -1628,11 +1644,7 @@ document.addEventListener("DOMContentLoaded", function () {
       capturePhoto.disabled = true;
       if (cameraWrapper) cameraWrapper.classList.add("scanning");
 
-      if (faceStatus) {
-        faceStatus.textContent = "Looking for face…";
-        faceStatus.style.background = "rgba(8, 12, 20, 0.88)";
-      }
-
+      assignLivenessChallenge();
       detectFace();
     } catch (err) {
       console.error("Camera access failed:", err);
@@ -1645,6 +1657,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showDocumentCaptureMode() {
     faceDetected = false;
+    challengePassed = false;
+    currentChallenge = null;
+
     if (cameraWrapper) cameraWrapper.classList.remove("scanning");
 
     if (guideShape) {
@@ -1674,6 +1689,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     selfieSuccess.style.display = "block";
     selfieSuccess.textContent = "Camera active for document scan";
+
+    // Scroll into focus for document capture step
+    cameraSection.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function captureDocument() {
@@ -1714,13 +1732,14 @@ document.addEventListener("DOMContentLoaded", function () {
       step4.classList.add("active");
 
       verifySection.style.display = "block";
+      verifySection.scrollIntoView({ behavior: "smooth", block: "center" });
     }, "image/jpeg", 0.90);
   }
 
   capturePhoto.addEventListener("click", function () {
     if (!selfieCaptured) {
       if (!faceDetected) {
-        alert("Please center your face inside the frame first.");
+        alert("Please complete the liveness challenge first.");
         return;
       }
 
@@ -1760,7 +1779,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Manual File Upload Fallback
   fallbackFileInput.addEventListener("change", function (e) {
     if (!e.target.files.length) return;
     const file = e.target.files[0];
@@ -1790,6 +1808,7 @@ document.addEventListener("DOMContentLoaded", function () {
       step4.classList.add("active");
 
       verifySection.style.display = "block";
+      verifySection.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   });
 
@@ -1824,7 +1843,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Multi-step animated verification sequence
   verifyForm.addEventListener("submit", function (e) {
     if (!livePhoto.files || !livePhoto.files.length) {
       e.preventDefault();
@@ -1838,7 +1856,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    typingData.value = JSON.stringify(keystrokes);
+    updateBehavioralPayload();
     verifyButton.disabled = true;
 
     loading.classList.add("active");
@@ -1858,7 +1876,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1200);
   });
 
-  // Animated result meters & counters
   document.querySelectorAll(".meter-fill").forEach(function (el) {
     const w = el.getAttribute("data-width");
     requestAnimationFrame(() => {
