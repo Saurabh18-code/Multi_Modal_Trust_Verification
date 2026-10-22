@@ -48,7 +48,10 @@ DATABASE_PATH = os.path.join(DATABASE_DIR, DATABASE_NAME)
 FLASK_HOST          = "0.0.0.0"
 FLASK_PORT          = 5000
 FLASK_DEBUG         = True
-SECRET_KEY          = "trustnet_ai_sjcem_2026_secret_key"
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "local-development-only-change-before-deployment"
+)
 MAX_CONTENT_LENGTH  = 16 * 1024 * 1024       # 16 MB max upload
 ALLOWED_EXTENSIONS  = {"png", "jpg", "jpeg", "gif", "pdf"}
  
