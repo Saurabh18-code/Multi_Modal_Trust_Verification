@@ -45,6 +45,8 @@ Clone the repository:
 Bash
 git clone [https://github.com/harshalpatil362/Multi_Modal_Trust_Verification.git](https://github.com/harshalpatil362/Multi_Modal_Trust_Verification.git)
 cd Multi_Modal_Trust_Verification
+
+
 Create and activate a virtual environment:
 
 Bash
@@ -53,14 +55,20 @@ python -m venv venv
 venv\Scripts\activate
 # On macOS/Linux:
 source venv/bin/activate
+
+
 Install dependencies:
 
 Bash
 pip install -r requirements.txt
+
+
 Run the Flask application:
 
 Bash
 python app.py
+
+
 Open your browser and navigate to http://127.0.0.1:5000 to interact with the platform.
 
 📄 License
