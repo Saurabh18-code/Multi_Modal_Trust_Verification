@@ -3,7 +3,7 @@
 #          Intelligence and Authentication Verification Platform
 # COLLEGE: St. John College of Engineering and Management, Palghar
 # DEPARTMENT: Computer Engineering
-# YEAR: B.Tech Final Year (2025-2026)
+# YEAR: B.Tech Final Year (2026-2027)
 #
 # FILE: modules/face_verification.py
 # DESCRIPTION: Module 1 - Compares a live selfie against an ID
