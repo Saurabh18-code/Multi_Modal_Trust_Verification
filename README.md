@@ -1,3 +1,32 @@
+
+# Multi-Modal Trust Verification
+
+🚀 **Live Demo:** [Click here to open the live website](https://multi-modal-trust-verification.onrender.com)
+
+An AI-based project for digital trust verification using face verification, document verification, and behavioral analysis.
+
+## Features
+- Face Verification
+- Document Verification
+- Behavioral Verification
+- Trust Assessment and Result Analysis
+- PDF Report Generation
+
+## Technologies Used
+- Python
+- Flask
+- OpenCV
+- DeepFace
+- TensorFlow
+- Tesseract OCR
+- HTML, CSS, JavaScript
+
+## Live Application
+Visit the deployed application:
+https://multi-modal-trust-verification.onrender.com
+
+## GitHub Repository
+Source code: https://github.com/Saurabh18-code/Multi_Modal_Trust_Verification
 Markdown
 # Multi-Modal Trust Verification (TrustNet)
 
